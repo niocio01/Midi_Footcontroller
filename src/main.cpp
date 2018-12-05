@@ -4,6 +4,8 @@
 
 
  #include "display.h"
+ #include "inputs.h"
+
 
 void setup()
 {
@@ -14,9 +16,16 @@ void setup()
     Serial.println("Serial Connection Established.");
 
     displaySetup();
+
+    initInputs();
 }
 
 void loop()
 {
-    
+    delay(2000);
+
+    Serial.print(FTM1_CNT);
+    Serial.print("     ");
+    Serial.println(FTM1_C0V);
+   // Serial.println(getInputs());
 }

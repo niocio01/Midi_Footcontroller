@@ -22,25 +22,31 @@ void displaySetup(void) {
     // Serial.print (Wire.getClock() );
     Serial.println(" Hz");
 
-    selectMuxPort(2);
+    
 
-    Wire.beginTransmission(0x3C);
-    response = Wire.endTransmission();
-    if (response == 0)
+    for (int i = 2 ; i <= 6 ; i++)
     {
-        Serial.println("Display Connected");
-    }
-    else
-    {
-        Serial.println("Display not reachable!");
-    }
+        selectMuxPort(i);
 
-    display.begin(DISPLAY1);
+        Wire.beginTransmission(0x3C);
+        response = Wire.endTransmission();
+        if (response == 0)
+        {
+            Serial.println("Display Connected");
+        }
+        else
+        {
+            Serial.println("Display not reachable!");
+        }
 
-    display.clearDisplay();
-    display.setTextSize(2);
-    display.setTextColor(WHITE);
-    display.setCursor(10, 10);
-    display.println("Display 3");
-    display.display();
+        display.begin(DISPLAY1);
+
+        display.clearDisplay();
+        display.setTextSize(2);
+        display.setTextColor(WHITE);
+        display.setCursor(10, 10);
+        display.print("Display ");
+        display.println(i-1);
+        display.display();
+    }
 }
