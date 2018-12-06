@@ -5,27 +5,28 @@
 
  #include "display.h"
  #include "inputs.h"
+ #include  "TimedTasks.h"
 
 
 void setup()
 {
     pinMode(LED_BUILTIN, OUTPUT);
 
-    Serial.begin(9600);
+    Serial.begin(115200);
     delay(2000);
     Serial.println("Serial Connection Established.");
 
     displaySetup();
 
-    initInputs();
+    initTimedTasks();
 }
 
 void loop()
 {
     delay(2000);
 
-    Serial.print(FTM1_CNT);
+    Serial.print(FTM3_CNT);
     Serial.print("     ");
-    Serial.println(FTM1_C0V);
+    Serial.println(FTM3_C0V);
    // Serial.println(getInputs());
 }

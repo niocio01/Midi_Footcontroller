@@ -7,9 +7,6 @@
 
 #define ANALOGINPUT PORT_PCR_MUX(1)
 
-#define UPDATE_INTERVALL 9375
-#define PRIO_FTM1 8
-
 volatile uint32_t debouncedInputBuffer = 0;
 
 
@@ -44,54 +41,6 @@ void initInputs (void)
     CSTM_SW3_CONFIG = DIGITALINPUT;
     CSTM_SW4_CONFIG = DIGITALINPUT;
     CSTM_SW5_CONFIG = DIGITALINPUT;
-
-
-
-
-SIM_SCGC6 |= SIM_SCGC6_FTM1 ; // enable CLK
-
-////////////////// Timer setup //////////////////////
-// Base Clock = System Clock = 120 MHz            //
-// Prescaler = 7 -> 120 MHz / 128 = 937.5kHz          //
-
-
-FTM1_SC = FTM_SC_CLKS(1) | FTM_SC_PS(7); // select Clock, set Prescaler
-
-FTM1_C0SC |= FTM_CSC_CHIE ; //| FTM_CSC_MSA | FTM_CSC_ELSB ; // enable Interrupt for channel 1
-//FTM1_SC |= FTM_SC_TOIE;
-FTM1_CNTIN = 0;
-FTM1_C0V =  UPDATE_INTERVALL;
-
-//delay(2000);
-
-//Serial.print(FTM1_CNT);
-//Serial.print("     ");
-//Serial.println(FTM1_C0V);
-
-NVIC_SET_PRIORITY(IRQ_FTM1, PRIO_FTM1);       // set interrupt priority
-NVIC_ENABLE_IRQ(IRQ_FTM1);                    // enable interrupt
-
-
-
-Serial.println("Timer1 Setup done");
-
-}
-
-void ftm1_isr(void)
-{
-    //Serial.print("isr");   
-
-    if (FTM1_C0SC & FTM_CSC_CHF)
-    {
-        Serial.print("isr");  
-    } 
-
-    FTM1_C0SC &= ~FTM_CSC_CHF; // reset IQR
-
-    //Serial.println(FTM1_C0V);
-
-    FTM1_C0V += 100;
-    
 
 }
 
