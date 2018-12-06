@@ -50,40 +50,31 @@ void initInputs (void)
 void checkInputs(void)
 {
 
-    //debouncedInputBuffer = ((TRACK1_PLAY_PINMASK) ? 1 : 0);
-    
-    // fill the current staus into the buffer to get one combined buffer
-    //debouncedInputBuffer = ((TRACK1_PLAY_PINMASK) ? 1 : 0)
-    //                    | (((TRACK1_OVD_PINMASK) ? 1 : 0) << 1);
-    
-
-     debouncedInputBuffer = ((BTN_BK_UP_PINMASK)? 1 : 0)
+     inputBuffer = ((BTN_BK_UP_PINMASK)? 1 : 0)
                     | (((BTN_BK_DWN_PINMASK)? 1 : 0) <<1 )
-                    | (((BTN_BK_DWN_PINMASK)? 1 : 0) <<2 )
-              //      | (((BTN_MODE_PINMASK)? 1 : 0) <<3 )
-                    | (((BTN_SAVE_PINMASK)? 1 : 0) <<4 )
-                    | (((BTN_BACK_PINMASK)? 1 : 0) <<5 )
-                    | (((BTN_SELECT_PINMASK)? 1 : 0) <<6 )
-                    | (((TRACK1_PLAY_PINMASK)? 1 : 0) <<7 )
-                    | (((TRACK1_OVD_PINMASK)? 1 : 0) <<8 )
-                    | (((TRACK2_PLAY_PINMASK)? 1 : 0) <<9 )
-                    | (((TRACK2_OVD_PINMASK)? 1 : 0) <<10 )
-                    | (((TRACK3_PLAY_PINMASK)? 1 : 0) <<11 )
-                    | (((TRACK3_OVD_PINMASK)? 1 : 0) <<12 )
-                    | (((TRACK4_PLAY_PINMASK)? 1 : 0) <<13 )
-                    | (((TRACK4_OVD_PINMASK)? 1 : 0) <<14 )
-                    | (((TRACK5_PLAY_PINMASK)? 1 : 0) <<15 )
-                    | (((TRACK5_OVD_PINMASK)? 1 : 0) <<16 )
-                    | (((CSTM_SW1_PINMASK)? 1 : 0) <<17 )
-                    | (((CSTM_SW2_PINMASK)? 1 : 0) <<18 )
-                    | (((CSTM_SW3_PINMASK)? 1 : 0) <<19 )
-                    | (((CSTM_SW4_PINMASK)? 1 : 0) <<20 )
-                    | (((CSTM_SW5_PINMASK)? 1 : 0) <<21 );
+                    | (((BTN_MODE_PINMASK)? 1 : 0) <<2 )
+                    | (((BTN_SAVE_PINMASK)? 1 : 0) <<3 )
+                    | (((BTN_BACK_PINMASK)? 1 : 0) <<4 )
+                    | (((BTN_SELECT_PINMASK)? 1 : 0) <<5 )
+                    | (((TRACK1_PLAY_PINMASK)? 1 : 0) <<6 )
+                    | (((TRACK1_OVD_PINMASK)? 1 : 0) <<7 )
+                    | (((TRACK2_PLAY_PINMASK)? 1 : 0) <<8 )
+                    | (((TRACK2_OVD_PINMASK)? 1 : 0) <<9 )
+                    | (((TRACK3_PLAY_PINMASK)? 1 : 0) <<10 )
+                    | (((TRACK3_OVD_PINMASK)? 1 : 0) <<11 )
+                    | (((TRACK4_PLAY_PINMASK)? 1 : 0) <<12 )
+                    | (((TRACK4_OVD_PINMASK)? 1 : 0) <<13 )
+                    | (((TRACK5_PLAY_PINMASK)? 1 : 0) <<14 )
+                    | (((TRACK5_OVD_PINMASK)? 1 : 0) <<15 )
+                    | (((CSTM_SW1_PINMASK)? 1 : 0) <<16 )
+                    | (((CSTM_SW2_PINMASK)? 1 : 0) <<17 )
+                    | (((CSTM_SW3_PINMASK)? 1 : 0) <<18 )
+                    | (((CSTM_SW4_PINMASK)? 1 : 0) <<19 )
+                    | (((CSTM_SW5_PINMASK)? 1 : 0) <<20 );
     // if the buffer didn't change, eighter because nothing happended,
     // or because the previously pressed Button has finished bouncing 
     // write the current state to the debounced buffer
 
-/*
     if (inputBuffer == lastInputBuffer) 
     {
         debouncedInputBuffer = inputBuffer;
@@ -91,8 +82,6 @@ void checkInputs(void)
 
     // write the current Buffer as LastBuffer for the next time
     lastInputBuffer = inputBuffer;
-
-    */
         
 }
 
@@ -103,9 +92,9 @@ uint32_t getInputs(void)
 
 void printInputs(uint32_t buffer)
 {
-  for (int i = 20; i >= 0; i--)
+  for (int i = 0; i <= 19; i++)
   {
     Serial.print(bitRead(buffer, i));
   }
-  Serial.println(bitRead(buffer, 21));
+  Serial.println(bitRead(buffer, 20));
 }

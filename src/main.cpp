@@ -10,13 +10,15 @@
 
 void setup()
 {
-    pinMode(LED_BUILTIN, OUTPUT);
+   // pinMode(LED_BUILTIN, OUTPUT);
+
+   //pinMode(4, INPUT);
 
     Serial.begin(115200);
     delay(2000);
     Serial.println("Serial Connection Established.");
 
-    displaySetup();
+    //displaySetup();
 
     initInputs();
 
@@ -25,14 +27,24 @@ void setup()
 
 void loop()
 {
-    delay(2000);
+    //delay(2000);
 
-    Serial.print(FTM3_CNT);
-    Serial.print("     ");
-    Serial.println(FTM3_C0V);
+   // Serial.print(FTM3_CNT);
+   // Serial.print("     ");
+   // Serial.println(FTM3_C0V);
     //Serial.println(getInputs(),BIN);
-    //Serial.println(digitalRead(37),BIN);
-    printInputs(getInputs());
+    //Serial.println(digitalRead(4),BIN);
+
+    static uint32_t lastInput = 0;
+
+    if (getInputs() != lastInput)
+    {
+        if(getInputs() != 0)
+        {
+            printInputs(getInputs());
+        }    
+    lastInput = getInputs();
+    }
 
 }
 
