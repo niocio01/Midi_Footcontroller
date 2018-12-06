@@ -18,6 +18,8 @@ void setup()
 
     displaySetup();
 
+    initInputs();
+
     initTimedTasks();
 }
 
@@ -28,5 +30,9 @@ void loop()
     Serial.print(FTM3_CNT);
     Serial.print("     ");
     Serial.println(FTM3_C0V);
-   // Serial.println(getInputs());
+    //Serial.println(getInputs(),BIN);
+    //Serial.println(digitalRead(37),BIN);
+    printInputs(getInputs());
+
 }
+

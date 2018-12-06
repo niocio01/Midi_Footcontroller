@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include "inputs.h"
 
 #define uS_TO_TIMER_COMPARE(uS) ((uS * 15) >> 5) //Fixed point equivalent of uS / 2.13333.
 
@@ -44,22 +45,9 @@ void initTimedTasks(void)
 volatile bool alternate = 0;
 
 void task0(void)
-{
-    //Serial.print("task ");
-
-    //Demo for actually doing something:
-    if (alternate)
-    {
-        digitalWrite(LED_BUILTIN, HIGH);
-        alternate = 0;
-        FTM3_C0V += uS_TO_TIMER_COMPARE(UPDATE_INTERVALL);
-    }
-    else
-    {
-        digitalWrite(LED_BUILTIN, LOW);
-        alternate = 1;
-        FTM3_C0V += uS_TO_TIMER_COMPARE(UPDATE_INTERVALL);
-    }
+{        
+    FTM3_C0V += uS_TO_TIMER_COMPARE(UPDATE_INTERVALL);
+    checkInputs();
 }
 
 
