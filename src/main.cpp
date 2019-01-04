@@ -2,10 +2,13 @@
 #include <core_pins.h>
 #include <kinetis.h>
 
+#include <MIDI.h>
+
 
  #include "display.h"
  #include "inputs.h"
  #include  "TimedTasks.h"
+ #include "myMidi.h"
 
 
 void setup()
@@ -18,11 +21,15 @@ void setup()
     delay(2000);
     Serial.println("Serial Connection Established.");
 
-    //displaySetup();
+    displaySetup();
 
-    initInputs();
+    //initInputs();
 
-    initTimedTasks();
+    //initTimedTasks();
+
+    midiSetup();
+
+    
 }
 
 void loop()
@@ -37,14 +44,23 @@ void loop()
 
     static uint32_t lastInput = 0;
 
-    if (getInputs() != lastInput)
-    {
-        if(getInputs() != 0)
-        {
-            printInputs(getInputs());
-        }    
-    lastInput = getInputs();
-    }
+    
+
+  //  if (getInputs() != lastInput)
+  //  {
+  //      if(getInputs() != 0)
+  //      {
+  //          printInputs(getInputs());
+  //      }    
+  //  lastInput = getInputs();
+  //  }
+
+
+  //midiInputTest ();
+
+  
+ midiOutputTest();
+
 
 }
 

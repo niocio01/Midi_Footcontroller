@@ -1,4 +1,6 @@
-#include <Wire.h>
+// #include <Wire.h>
+
+#include "i2c_t3.h"
 
 #define TCAADDR 0x70
 
