@@ -3,7 +3,7 @@
 
 #define uS_TO_TIMER_COMPARE(uS) ((uS * 15) >> 5) //Fixed point equivalent of uS / 2.13333.
 
-#define UPDATE_INTERVALL 1000
+#define UPDATE_INTERVALL 10000
 
 void initTimedTasks(void)
 {

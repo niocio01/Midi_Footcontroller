@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "Pins.h"
+#include "TimedTasks.h"
 
 // ENABLE INPUT-PULLDOWN
 // Set Pint as GPIO
@@ -8,10 +9,14 @@
 #define ANALOGINPUT PORT_PCR_MUX(1)
 
 volatile uint32_t debouncedInputBuffer = 0;
+volatile uint32_t LastDebouncedInputBuffer = 0;
+volatile uint32_t wasPressedBuffer = 0;
 
 
 void initInputs (void)
 {
+
+    initTimedTasks();
 
     BTN_BK_UP_CONFIG = DIGITALINPUT;
     BTN_BK_DWN_CONFIG = DIGITALINPUT;
@@ -82,7 +87,10 @@ void checkInputs(void)
 
     // write the current Buffer as LastBuffer for the next time
     lastInputBuffer = inputBuffer;
-        
+
+    wasPressedBuffer = wasPressedBuffer | ( (LastDebouncedInputBuffer xor debouncedInputBuffer) & debouncedInputBuffer ) ; // search positive flanks and add them to Buffer
+
+    LastDebouncedInputBuffer = debouncedInputBuffer;
 }
 
 uint32_t getInputs(void)
@@ -97,4 +105,24 @@ void printInputs(uint32_t buffer)
     Serial.print(bitRead(buffer, i));
   }
   Serial.println(bitRead(buffer, 20));
+}
+
+bool bottonsWerePressed(uint32_t btnMask)
+{
+   // printInputs(wasHiBuffer);
+   // printInputs(wasLowBuffer);
+   // printInputs(inputBuffer);
+   
+
+
+    if( (~wasPressedBuffer & btnMask) ) 
+    {
+        return false; // comparison was not equal to 0 (true), so a asked button was not pressed
+    }
+    else // the comparison resulted in a 0 (false), so the asked buttons were pressed
+    {
+        wasPressedBuffer = wasPressedBuffer & ~btnMask; // reset the asked buttons
+        return true;
+        printInputs(wasPressedBuffer);
+    }
 }

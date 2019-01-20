@@ -4,63 +4,63 @@
 
 #include <MIDI.h>
 
+#include "display.h"
+#include "inputs.h"
+#include "TimedTasks.h"
+#include "myMidi.h"
+#include "led.h"
+#include "mySD.h"
 
- #include "display.h"
- #include "inputs.h"
- #include  "TimedTasks.h"
- #include "myMidi.h"
-
+int count = 0;
 
 void setup()
 {
-   // pinMode(LED_BUILTIN, OUTPUT);
+    // pinMode(LED_BUILTIN, OUTPUT);
 
-   //pinMode(4, INPUT);
+    //pinMode(4, INPUT);
 
-    Serial.begin(115200);
-    delay(2000);
-    Serial.println("Serial Connection Established.");
+  //  Serial.begin(115200);
+  //  delay(2000);
+  //  Serial.println("Serial Connection Established.");
 
-    displaySetup();
+    //displaySetup();
 
-    //initInputs();
+    initInputs();
 
-    //initTimedTasks();
+    //midiSetup();
 
-    midiSetup();
+    //initLed();
 
-    
+    initSD();
+
+    // sdWriteTest();
 }
 
 void loop()
 {
+    
     //delay(2000);
 
-   // Serial.print(FTM3_CNT);
-   // Serial.print("     ");
-   // Serial.println(FTM3_C0V);
+    // Serial.print(FTM3_CNT);
+    // Serial.print("     ");
+    // Serial.println(FTM3_C0V);
     //Serial.println(getInputs(),BIN);
     //Serial.println(digitalRead(4),BIN);
 
-    static uint32_t lastInput = 0;
+   // printInputs(getInputs());
+    //delay(2000);
 
-    
+    //midiInputTest ();
 
-  //  if (getInputs() != lastInput)
-  //  {
-  //      if(getInputs() != 0)
-  //      {
-  //          printInputs(getInputs());
-  //      }    
-  //  lastInput = getInputs();
-  //  }
+    //midiOutputTest();
 
+    //ledTest();
 
-  //midiInputTest ();
-
-  
- midiOutputTest();
-
-
+     if (bottonsWerePressed(BTN_BACK))
+     {
+        count ++;
+        Serial.print("Back Pressed ");
+        Serial.print(count);
+        Serial.print("\n");
+     }
 }
-
