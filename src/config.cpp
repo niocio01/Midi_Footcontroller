@@ -6,6 +6,10 @@
 
 config_t config; // initiate the config structure
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                                       readGlobals                                                          //
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 bool readGlobals(void)
 {
     const char *filename = "/globals.txt";
@@ -16,25 +20,43 @@ bool readGlobals(void)
 
     JsonObject &root = jsonBuffer.parseObject(file);
 
-    if (!root.success())
+    if (!root.success()) // file not found, so create new one from Defaults
     {
-        Serial.println(F("Failed to read GlobalSettings.txt \nusing default configuration"));
+        Serial.print("Global Settings File does not exist. \nusing default configuration.\n");
+
+        // define default Values
+        config.globalSettings.currentBank = 1;
+        config.globalSettings.brightness = 100;
+
+        writeGlobals();
+        Serial.print("\n");
+
+        return true;
     }
 
-    // Copy values from the JsonObject to the Config
-    config.globalSettings.currentBank = root["currentBank"] | 1;
-    config.globalSettings.brightness = root["brightness"] | 100;
+    else // File found
+    {
+        // Copy values from the JsonObject to the Config
+        config.globalSettings.currentBank = root["currentBank"];
+        config.globalSettings.brightness = root["brightness"];
 
-    // Close the file (File's destructor doesn't close the file)
-    file.close();
+        // Close the file (File's destructor doesn't close the file)
+        file.close();
+
+        return true;
+    }
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                                         readBank                                                           //
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool readBank(uint8_t bankNr)
 {
     char filename[] = "/bank00.txt";
 
-    filename[5] = bankNr/10 +'0';
-    filename[6] = bankNr%10 +'0';
+    filename[5] = bankNr / 10 + '0';
+    filename[6] = bankNr % 10 + '0';
 
     // const char *filename = "/bank1.txt";
     File file = SD.open(filename);
@@ -44,16 +66,120 @@ bool readBank(uint8_t bankNr)
 
     JsonObject &root = jsonBuffer.parseObject(file);
 
-    if (!root.success())
+    if (!root.success()) // file not found
     {
-        Serial.print("Failed to read ");
-        Serial.print(filename);
-        Serial.print(" using default File");
+        if (bankNr != 0) // its not the Default, so use Values From default to create new bank
+        {
+            Serial.print("Bank Nr. ");
+            Serial.print(bankNr);
+            Serial.println(" does not exist, using Values from Default bank File.");
+            readBank(00);      // get the values from the existing Default File
+            writeBank(bankNr); // write these into the asked Bank File
+
+            return true; // exit, otherwise it will read the same values in again. (just a time saver)
+        }
+
+        else // the default File does not exist, so create it from scratch
+        {
+            Serial.println("Default Bank File does not exist eighter.");
+            Serial.print("Creating new Default Bank File.\n\n");
+
+            // Define Default Values
+
+            config.settings.TrackColor[0] = RED;
+            config.settings.TrackColor[1] = BLUE;
+            config.settings.TrackColor[2] = GREEN;
+            config.settings.TrackColor[3] = ORANGE;
+            config.settings.TrackColor[4] = VIOLET;
+
+            config.settings.function[0].midi_CC = 1;
+            config.settings.function[0].function = Track_Start_Stop;
+            config.settings.function[0].additionalParameter[0] = 0;
+            config.settings.function[0].additionalParameter[1] = 0;
+
+            config.settings.function[1].midi_CC = 2;
+            config.settings.function[1].function = Track_Play_Rec;
+            config.settings.function[1].additionalParameter[0] = 0;
+            config.settings.function[1].additionalParameter[1] = 0;
+
+            config.settings.function[2].midi_CC = 3;
+            config.settings.function[2].function = Track_Start_Stop;
+            config.settings.function[2].additionalParameter[0] = 0;
+            config.settings.function[2].additionalParameter[1] = 0;
+
+            config.settings.function[3].midi_CC = 4;
+            config.settings.function[3].function = Track_Play_Rec;
+            config.settings.function[3].additionalParameter[0] = 0;
+            config.settings.function[3].additionalParameter[1] = 0;
+
+            config.settings.function[4].midi_CC = 5;
+            config.settings.function[4].function = Track_Start_Stop;
+            config.settings.function[4].additionalParameter[0] = 0;
+            config.settings.function[4].additionalParameter[1] = 0;
+
+            config.settings.function[5].midi_CC = 6;
+            config.settings.function[5].function = Track_Play_Rec;
+            config.settings.function[5].additionalParameter[0] = 0;
+            config.settings.function[5].additionalParameter[1] = 0;
+
+            config.settings.function[6].midi_CC = 7;
+            config.settings.function[6].function = Track_Start_Stop;
+            config.settings.function[6].additionalParameter[0] = 0;
+            config.settings.function[6].additionalParameter[1] = 0;
+
+            config.settings.function[7].midi_CC = 8;
+            config.settings.function[7].function = Track_Play_Rec;
+            config.settings.function[7].additionalParameter[0] = 0;
+            config.settings.function[7].additionalParameter[1] = 0;
+
+            config.settings.function[8].midi_CC = 9;
+            config.settings.function[8].function = Track_Start_Stop;
+            config.settings.function[8].additionalParameter[0] = 0;
+            config.settings.function[8].additionalParameter[1] = 0;
+
+            config.settings.function[9].midi_CC = 10;
+            config.settings.function[9].function = Track_Play_Rec;
+            config.settings.function[9].additionalParameter[0] = 0;
+            config.settings.function[9].additionalParameter[1] = 0;
+
+            config.settings.function[10].midi_CC = 11;
+            config.settings.function[10].function = All_Start_Stop;
+            config.settings.function[10].additionalParameter[0] = 0;
+            config.settings.function[10].additionalParameter[1] = 0;
+
+            config.settings.function[11].midi_CC = 12;
+            config.settings.function[11].function = Last_Undo_Redo;
+            config.settings.function[11].additionalParameter[0] = 0;
+            config.settings.function[11].additionalParameter[1] = 0;
+
+            config.settings.function[12].midi_CC = 13;
+            config.settings.function[12].function = Tap_Tempo;
+            config.settings.function[12].additionalParameter[0] = 0;
+            config.settings.function[12].additionalParameter[1] = 127;
+
+            config.settings.function[13].midi_CC = 14;
+            config.settings.function[13].function = Rhythm_Level;
+            config.settings.function[13].additionalParameter[0] = 0;
+            config.settings.function[13].additionalParameter[1] = 0;
+
+            config.settings.function[14].midi_CC = 15;
+            config.settings.function[14].function = Mic_Mute;
+            config.settings.function[14].additionalParameter[0] = 0;
+            config.settings.function[14].additionalParameter[1] = 0;
+
+            config.settings.function[15].midi_CC = 16;
+            config.settings.function[15].function = Input_FX_Inc_Dec;
+            config.settings.function[15].additionalParameter[0] = 0;
+            config.settings.function[15].additionalParameter[1] = 0;
+
+            writeBank(0);      // use these defaults to write the Default File
+
+            return true; // exit, otherwise it will read the same values in again. (just a time saver)
+        }
     }
 
-    else
+    else // specified file found and readable
     {
-        // Copy values from the JsonObject to the Config
         JsonArray &bankSettings_TrackColors = root["bankSettings"]["TrackColors"];
 
         // get Colors for tracks from array and store in RAM
@@ -206,6 +332,10 @@ bool readBank(uint8_t bankNr)
                 config.settings.function[i].function = Target_Track_Inc_Dec;
                 break;
 
+            case Mic_Mute:
+                config.settings.function[i].function = Mic_Mute;
+                break;
+
             default:
                 config.settings.function[i].function = BLANK;
                 break;
@@ -221,6 +351,123 @@ bool readBank(uint8_t bankNr)
         return true;
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                                        writeGlobals                                                        //
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool writeGlobals(void)
+{
+    char *filename = "/globals.txt";
+    // Delete existing file, otherwise the configuration is appended to the file
+    SD.remove(filename);
+
+    // Open file for writing
+    File file = SD.open(filename, FILE_WRITE);
+    if (!file)
+    {
+        Serial.println("Failed to create file");
+        return false;
+    }
+
+    size_t capacity = JSON_OBJECT_SIZE(2) + 40;
+    DynamicJsonBuffer jsonBuffer(capacity);
+
+    JsonObject &root = jsonBuffer.createObject();
+
+    root["currentBank"] = config.globalSettings.currentBank;
+    root["brightness"] = config.globalSettings.brightness;
+
+    // Serialize JSON to file
+    if (root.printTo(file) == 0)
+    {
+        Serial.println("Failed to write to Global Settings file");
+    }
+    else
+    {
+        Serial.println("Successfully wrote Global Settings to file.");
+    }
+
+    // Close the file (File's destructor doesn't close the file)
+    file.close();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                                          writeBank                                                         //
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool writeBank(uint8_t bankNr)
+{
+
+    char filename[] = "/bank00.txt";
+
+    filename[5] = bankNr / 10 + '0';
+    filename[6] = bankNr % 10 + '0';
+
+    // char *filename = "/bank1.txt";
+    // Delete existing file, otherwise the configuration is appended to the file
+    SD.remove(filename);
+
+    // Open file for writing
+    File file = SD.open(filename, FILE_WRITE);
+    if (!file)
+    {
+        Serial.println("Failed to create file");
+        return false;
+    }
+
+    size_t capacity = 16 * JSON_ARRAY_SIZE(2) + 16 * JSON_ARRAY_SIZE(3) + JSON_ARRAY_SIZE(5) + JSON_ARRAY_SIZE(16) + JSON_OBJECT_SIZE(1) + JSON_OBJECT_SIZE(2);
+    DynamicJsonBuffer jsonBuffer(capacity);
+
+    JsonObject &root = jsonBuffer.createObject();
+
+    JsonObject &bankSettings = root.createNestedObject("bankSettings");
+
+    JsonArray &bankSettings_TrackColors = bankSettings.createNestedArray("TrackColors");
+    for (int i = 0; i < 5; i++)
+    {
+        bankSettings_TrackColors.add((int)config.settings.TrackColor[i]);
+    }
+
+    JsonArray &bankSettings_buttons = bankSettings.createNestedArray("buttons");
+
+    for (int i = 0; i < 16; i++)
+    {
+        JsonArray &bankSettings_current_button = bankSettings_buttons.createNestedArray();
+        bankSettings_current_button.add((int)config.settings.function[i].midi_CC);
+        bankSettings_current_button.add((int)config.settings.function[i].function);
+        JsonArray &bankSettings_current_button_Adititional_Settings = bankSettings_current_button.createNestedArray();
+        bankSettings_current_button_Adititional_Settings.add((int)config.settings.function[i].additionalParameter[0]);
+        bankSettings_current_button_Adititional_Settings.add((int)config.settings.function[i].additionalParameter[1]);
+    }
+
+    // Serialize JSON to file
+    if (root.printTo(file) == 0)
+    {
+        Serial.print("Failed to write to bank Nr.");
+        Serial.print(bankNr);
+        Serial.print(".\n");
+    }
+    else
+    {
+        if (bankNr == 0)
+        {
+            Serial.println("Successfully wrote Settings to default Bank File.");
+        }
+        else
+        {
+            Serial.print("Successfully wrote Settings for Bank Nr. ");
+            Serial.println(bankNr);
+        }
+    }
+
+    // Close the file (File's destructor doesn't close the file)
+    file.close();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                                       printSettings                                                        //
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void printSettings(void)
 {
@@ -268,7 +515,7 @@ void printSettings(void)
             break;
 
         case VIOLET:
-            Serial.println("VIOLET");
+            Serial.println("Violet");
             break;
 
         default:
@@ -393,6 +640,10 @@ void printSettings(void)
             Serial.println("Target Track Increase/Decrease");
             break;
 
+        case Mic_Mute:
+            Serial.println("Mute Microphone");
+            break;
+
         default:
             Serial.println("Not assigned");
             break;
@@ -405,6 +656,10 @@ void printSettings(void)
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                                        readSettings                                                        //
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 bool readSettings(void)
 {
 
@@ -412,7 +667,7 @@ bool readSettings(void)
 
     result1 = readGlobals();
 
-    result2 = readBank(3);
+    result2 = readBank(config.globalSettings.currentBank);
 
     if (result1 == true && result2 == true)
     {
@@ -424,101 +679,9 @@ bool readSettings(void)
     }
 }
 
-bool writeGlobals(void)
-{
-    char *filename = "/globals.txt";
-    // Delete existing file, otherwise the configuration is appended to the file
-    SD.remove(filename);
-
-    // Open file for writing
-    File file = SD.open(filename, FILE_WRITE);
-    if (!file)
-    {
-        Serial.println("Failed to create file");
-        return false;
-    }
-
-    size_t capacity = JSON_OBJECT_SIZE(2) + 40;
-    DynamicJsonBuffer jsonBuffer(capacity);
-
-    JsonObject &root = jsonBuffer.createObject();
-
-    root["currentBank"] = config.globalSettings.currentBank;
-    root["brightness"] = config.globalSettings.brightness;
-
-    // Serialize JSON to file
-    if (root.printTo(file) == 0)
-    {
-        Serial.println("Failed to write to file");
-    }
-    else
-    {
-        Serial.println("Successfully wrote global Settings to file.");
-    }
-
-    // Close the file (File's destructor doesn't close the file)
-    file.close();
-}
-
-bool writeBank(uint8_t bankNr)
-{
-
-    char filename[] = "/bank00.txt";
-
-    filename[5] = bankNr/10 +'0';
-    filename[6] = bankNr%10 +'0';
-    
-    
-    // char *filename = "/bank1.txt";
-    // Delete existing file, otherwise the configuration is appended to the file
-    SD.remove(filename);
-
-    // Open file for writing
-    File file = SD.open(filename, FILE_WRITE);
-    if (!file)
-    {
-        Serial.println("Failed to create file");
-        return false;
-    }
-
-    size_t capacity = 16 * JSON_ARRAY_SIZE(2) + 16 * JSON_ARRAY_SIZE(3) + JSON_ARRAY_SIZE(5) + JSON_ARRAY_SIZE(16) + JSON_OBJECT_SIZE(1) + JSON_OBJECT_SIZE(2);
-    DynamicJsonBuffer jsonBuffer(capacity);
-
-    JsonObject &root = jsonBuffer.createObject();
-
-    JsonObject &bankSettings = root.createNestedObject("bankSettings");
-
-    JsonArray &bankSettings_TrackColors = bankSettings.createNestedArray("TrackColors");
-    for (int i = 0; i < 5; i++)
-    {
-        bankSettings_TrackColors.add((int)config.settings.TrackColor[i]);
-    }
-
-    JsonArray &bankSettings_buttons = bankSettings.createNestedArray("buttons");
-
-    for (int i = 0; i < 16; i++)
-    {
-        JsonArray &bankSettings_current_button = bankSettings_buttons.createNestedArray();
-        bankSettings_current_button.add((int)config.settings.function[i].midi_CC);
-        bankSettings_current_button.add((int)config.settings.function[i].function);
-        JsonArray &bankSettings_current_button_Adititional_Settings = bankSettings_current_button.createNestedArray();
-        bankSettings_current_button_Adititional_Settings.add((int)config.settings.function[i].additionalParameter[0]);
-        bankSettings_current_button_Adititional_Settings.add((int)config.settings.function[i].additionalParameter[1]);
-    }
-
-    // Serialize JSON to file
-    if (root.printTo(file) == 0)
-    {
-        Serial.println("Failed to write to bank File");
-    }
-    else
-    {
-        Serial.println("Successfully wrote Bank Settings to file.");
-    }
-
-    // Close the file (File's destructor doesn't close the file)
-    file.close();
-}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                                       writeSettings                                                        //
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool writeSettings(void)
 {

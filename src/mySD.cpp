@@ -116,7 +116,7 @@ void initSD(void)
 
     readSettings();
     
-    writeSettings();
+    // writeSettings();
 
     printSettings();
 

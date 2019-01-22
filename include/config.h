@@ -36,12 +36,13 @@ typedef enum // all the possible Function Types get united
     Track_FX_On_Off,
     Track_FX_Inc_Dec,
     Target_Track_Inc_Dec,
+    Mic_Mute,
 
 } Function_Type_t ;
 
 typedef struct // every Button is Configured with a Midi CC and addiditional Settings for each function
 {
-    uint8_t midi_CC;
+    uint8_t midi_CC; // 1-31, 64-95
     Function_Type_t function;
     uint8_t additionalParameter[2];
 
