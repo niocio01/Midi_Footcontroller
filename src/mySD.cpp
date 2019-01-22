@@ -11,18 +11,14 @@ struct Config2
     int port;
 };
 
-const char *filename = "/config.txt"; // <- SD library uses 8.3 filenames
+const char *filename = "/bank.txt"; // <- SD library uses 8.3 filenames
 Config2 config2;
 
 // Loads the configuration from a file
 void loadConfiguration(const char *filename, Config2 &config)
 {
-    // Open file for reading
     File file = SD.open(filename);
 
-    // Allocate the memory pool on the stack.
-    // Don't forget to change the capacity to match your JSON document.
-    // Use arduinojson.org/assistant to compute the capacity.
     StaticJsonBuffer<512> jsonBuffer;
 
     // Parse the root object
@@ -81,7 +77,7 @@ void saveConfiguration(const char *filename, const Config2 &config2)
 void printFile(const char *filename)
 {
     // Open file for reading
-    File file = SD.open(filename);
+    File file = SD.open("/bank.txt");
     if (!file)
     {
         Serial.println(F("Failed to read file"));
@@ -109,13 +105,15 @@ void initSD(void)
     // Initialize SD library
     while (!SD.begin(chipSelect))
     {
-        Serial.println(F("Failed to initialize SD library"));
+        Serial.println(F("Failed to initialize SD library Is The Card Inserted?"));
         delay(1000);
     }
 
-    readSettings();
+    readSettings();    
 
     writeSettings();
+
+    printFile("/bank.txt");
 
     
 

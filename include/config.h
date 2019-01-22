@@ -240,12 +240,8 @@ typedef struct // every Button is Configured with a Midi CC and addiditional Set
 
 typedef struct
 {
-    RGB_Colors_t track_One_color;
-    RGB_Colors_t track_Two_color;
-    RGB_Colors_t track_Three_color;
-    RGB_Colors_t track_Four_color;
-    RGB_Colors_t track_Five_color;
-
+    RGB_Colors_t TrackColor[5];
+    
     buttonFunction_t function [16];
 
 } bankSettings_t;
@@ -268,7 +264,19 @@ typedef struct // master Struct Of current Config
 
 ///////////////////////////////////////////////////////////////////////////////////
 
+
+
+bool readGlobals(void);
+
+bool readBank(uint8_t bankNr);
+
 bool readSettings(void);
+
+
+
+bool writeGlobals(void);
+
+bool writeBank(uint8_t bankNr);
 
 bool writeSettings(void);
 
