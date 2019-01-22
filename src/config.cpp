@@ -391,7 +391,7 @@ void printSettings(void)
         }
         Serial.print("Additional Parameter 1:  ");
         Serial.println(config.settings.function[i].additionalParameter[0]);
-        Serial.print("Additional Parameter 1:  ");
+        Serial.print("Additional Parameter 2:  ");
         Serial.println(config.settings.function[i].additionalParameter[0]);
         Serial.print("\n\n");
     }
@@ -466,90 +466,31 @@ bool writeBank(uint8_t bankNr)
         return false;
     }
 
-    size_t capacity = JSON_ARRAY_SIZE(16) + JSON_OBJECT_SIZE(1) + 10 * JSON_OBJECT_SIZE(2) + 6 * JSON_OBJECT_SIZE(3) + JSON_OBJECT_SIZE(6);
+    size_t capacity = 16 * JSON_ARRAY_SIZE(2) + 16 * JSON_ARRAY_SIZE(3) + JSON_ARRAY_SIZE(5) + JSON_ARRAY_SIZE(16) + JSON_OBJECT_SIZE(1) + JSON_OBJECT_SIZE(2);
     DynamicJsonBuffer jsonBuffer(capacity);
 
     JsonObject &root = jsonBuffer.createObject();
 
     JsonObject &bankSettings = root.createNestedObject("bankSettings");
-    // bankSettings["trackOneColor"] = config.settings.track_One_color;
-    // bankSettings["trackTwoColor"] = config.settings.track_Two_color;
-    // bankSettings["trackTreeColor"] = config.settings.track_Three_color;
-    // bankSettings["trackFourColor"] = config.settings.track_Four_color;
-    // bankSettings["trackFiveColour"] = config.settings.track_Five_color;
 
-    JsonArray &bankSettings_buttons = bankSettings.createNestedArray("buttons");
+    JsonArray &bankSettings_TrackColors = bankSettings.createNestedArray("TrackColors");
+    for (int i = 0; i < 5 ; i++)
+    {
+        bankSettings_TrackColors.add((int)config.settings.TrackColor[i]);
+    }
+    
 
-    JsonObject &bankSettings_buttons_0 = bankSettings_buttons.createNestedObject();
-    bankSettings_buttons_0["CC_Nr"] = config.settings.function[0].midi_CC;
-    bankSettings_buttons_0["Function"] = "Play/Overdub";
+    JsonArray& bankSettings_buttons = bankSettings.createNestedArray("buttons");
 
-    JsonObject &bankSettings_buttons_1 = bankSettings_buttons.createNestedObject();
-    bankSettings_buttons_1["CC_Nr"] = 2;
-    bankSettings_buttons_1["Function"] = "Start/Stop";
-    bankSettings_buttons_1["PlayMode"] = "multi";
-
-    JsonObject &bankSettings_buttons_2 = bankSettings_buttons.createNestedObject();
-    bankSettings_buttons_2["CC_Nr"] = 3;
-    bankSettings_buttons_2["Function"] = "Play/Overdub";
-    bankSettings_buttons_2["OnStart"] = "Play";
-
-    JsonObject &bankSettings_buttons_3 = bankSettings_buttons.createNestedObject();
-    bankSettings_buttons_3["CC_Nr"] = 4;
-    bankSettings_buttons_3["Function"] = "Start/Stop";
-
-    JsonObject &bankSettings_buttons_4 = bankSettings_buttons.createNestedObject();
-    bankSettings_buttons_4["CC_Nr"] = 5;
-    bankSettings_buttons_4["Function"] = "Play/Overdub";
-    bankSettings_buttons_4["OnStart"] = "Overdub";
-
-    JsonObject &bankSettings_buttons_5 = bankSettings_buttons.createNestedObject();
-    bankSettings_buttons_5["CC_Nr"] = 6;
-    bankSettings_buttons_5["Function"] = "Start/Stop";
-
-    JsonObject &bankSettings_buttons_6 = bankSettings_buttons.createNestedObject();
-    bankSettings_buttons_6["CC_Nr"] = 7;
-    bankSettings_buttons_6["Function"] = "Play/Overdub";
-    bankSettings_buttons_6["OnStart"] = "Play";
-
-    JsonObject &bankSettings_buttons_7 = bankSettings_buttons.createNestedObject();
-    bankSettings_buttons_7["CC_Nr"] = 8;
-    bankSettings_buttons_7["Function"] = "Start/Stop";
-
-    JsonObject &bankSettings_buttons_8 = bankSettings_buttons.createNestedObject();
-    bankSettings_buttons_8["CC_Nr"] = 9;
-    bankSettings_buttons_8["Function"] = "Play/Overdub";
-    bankSettings_buttons_8["OnStart"] = "Overdub";
-
-    JsonObject &bankSettings_buttons_9 = bankSettings_buttons.createNestedObject();
-    bankSettings_buttons_9["CC_Nr"] = 10;
-    bankSettings_buttons_9["Function"] = "Start/Stop";
-
-    JsonObject &bankSettings_buttons_10 = bankSettings_buttons.createNestedObject();
-    bankSettings_buttons_10["CC_Nr"] = 11;
-    bankSettings_buttons_10["Function"] = "AllStart";
-
-    JsonObject &bankSettings_buttons_11 = bankSettings_buttons.createNestedObject();
-    bankSettings_buttons_11["CC_Nr"] = 12;
-    bankSettings_buttons_11["Function"] = "Undo/Redo";
-
-    JsonObject &bankSettings_buttons_12 = bankSettings_buttons.createNestedObject();
-    bankSettings_buttons_12["CC_Nr"] = 13;
-    bankSettings_buttons_12["Function"] = "TapTempo";
-
-    JsonObject &bankSettings_buttons_13 = bankSettings_buttons.createNestedObject();
-    bankSettings_buttons_13["CC_Nr"] = 14;
-    bankSettings_buttons_13["Function"] = "Blank";
-
-    JsonObject &bankSettings_buttons_14 = bankSettings_buttons.createNestedObject();
-    bankSettings_buttons_14["CC_Nr"] = 15;
-    bankSettings_buttons_14["Function"] = "MicMute";
-
-    JsonObject &bankSettings_buttons_15 = bankSettings_buttons.createNestedObject();
-    bankSettings_buttons_15["CC_Nr"] = 16;
-    bankSettings_buttons_15["Function"] = "Pan";
-
-    Serial.println(" json created");
+    for (int i = 0; i < 16 ; i++)
+    {
+        JsonArray& bankSettings_current_button = bankSettings_buttons.createNestedArray();
+        bankSettings_current_button.add((int)config.settings.function[i].midi_CC);
+        bankSettings_current_button.add((int)config.settings.function[i].function);
+        JsonArray& bankSettings_current_button_Adititional_Settings = bankSettings_current_button.createNestedArray();
+        bankSettings_current_button_Adititional_Settings.add((int)config.settings.function[i].additionalParameter[0]);
+        bankSettings_current_button_Adititional_Settings.add((int)config.settings.function[i].additionalParameter[1]);
+    }
 
     // Serialize JSON to file
     if (root.printTo(file) == 0)
