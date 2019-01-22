@@ -7,7 +7,6 @@ config_t config; // initiate the config structure
 
 bool readGlobals(void)
 {
-
     const char *filename = "/globals.txt";
     File file = SD.open(filename);
 
@@ -27,22 +26,14 @@ bool readGlobals(void)
 
     // Close the file (File's destructor doesn't close the file)
     file.close();
-
-    Serial.print("Reading Settings:\n\n");
-    Serial.print("Current Bank: ");
-    Serial.print(config.globalSettings.currentBank);
-    Serial.print("\nBrightness:   ");
-    Serial.print(config.globalSettings.brightness);
-    Serial.print("\n");
 }
 
 bool readBank(uint8_t bankNr)
 {
-
     const char *filename = "/bank.txt";
     File file = SD.open(filename);
 
-    size_t capacity = JSON_ARRAY_SIZE(16) + JSON_OBJECT_SIZE(1) + 10 * JSON_OBJECT_SIZE(2) + 6 * JSON_OBJECT_SIZE(3) + JSON_OBJECT_SIZE(6);
+    size_t capacity = 16 * JSON_ARRAY_SIZE(2) + 16 * JSON_ARRAY_SIZE(3) + JSON_ARRAY_SIZE(5) + JSON_ARRAY_SIZE(16) + JSON_OBJECT_SIZE(1) + JSON_OBJECT_SIZE(2);
     DynamicJsonBuffer jsonBuffer(capacity);
 
     JsonObject &root = jsonBuffer.parseObject(file);
@@ -93,18 +84,316 @@ bool readBank(uint8_t bankNr)
             }
         }
 
+        JsonArray &bankSettings_buttons = root["bankSettings"]["buttons"];
+
+        for (int i = 0; i < 16; i++)
+        {
+            JsonArray &bankSettings_current_button = bankSettings_buttons[i];
+
+            config.settings.function[i].midi_CC = bankSettings_current_button[0];
+
+            switch (bankSettings_current_button.get<int>(1))
+            {
+            case Target_Track_Start_Stop:
+                config.settings.function[i].function = Target_Track_Start_Stop;
+                break;
+
+            case Target_Track_Stop:
+                config.settings.function[i].function = Target_Track_Stop;
+                break;
+
+            case Target_Track_Clear:
+                config.settings.function[i].function = Target_Track_Clear;
+                break;
+
+            case Target_Track_Undo_redo:
+                config.settings.function[i].function = Target_Track_Undo_redo;
+                break;
+
+            case Target_Track_Play_Level:
+                config.settings.function[i].function = Target_Track_Play_Level;
+                break;
+
+            case All_Start_Stop:
+                config.settings.function[i].function = All_Start_Stop;
+                break;
+
+            case Last_Undo_Redo:
+                config.settings.function[i].function = Last_Undo_Redo;
+                break;
+
+            case Tap_Tempo:
+                config.settings.function[i].function = Tap_Tempo;
+                break;
+
+            case Bank_Up_Down:
+                config.settings.function[i].function = Bank_Up_Down;
+                break;
+
+            case Track_Start_Stop:
+                config.settings.function[i].function = Track_Start_Stop;
+                break;
+
+            case Track_Play_Rec:
+                config.settings.function[i].function = Track_Play_Rec;
+                break;
+
+            case Track_Clear:
+                config.settings.function[i].function = Track_Clear;
+                break;
+
+            case Track_Undo_Redo:
+                config.settings.function[i].function = Track_Undo_Redo;
+                break;
+
+            case Track_Pan:
+                config.settings.function[i].function = Track_Pan;
+                break;
+
+            case All_Clear:
+                config.settings.function[i].function = All_Clear;
+                break;
+
+            case Rhythm_Level:
+                config.settings.function[i].function = Rhythm_Level;
+                break;
+
+            case Rhythm_Pattern:
+                config.settings.function[i].function = Memory_Level;
+                break;
+
+            case Memory_Level:
+                config.settings.function[i].function = Memory_Level;
+                break;
+
+            case Master_Comp:
+                config.settings.function[i].function = Master_Comp;
+                break;
+
+            case Master_Reverb:
+                config.settings.function[i].function = Master_Reverb;
+                break;
+
+            case Overdub_Mode:
+                config.settings.function[i].function = Overdub_Mode;
+                break;
+
+            case Input_FX_On_Off:
+                config.settings.function[i].function = Input_FX_On_Off;
+                break;
+
+            case Input_FX_Inc_Dec:
+                config.settings.function[i].function = Input_FX_Inc_Dec;
+                break;
+
+            case Track_FX_On_Off:
+                config.settings.function[i].function = Track_FX_On_Off;
+                break;
+
+            case Track_FX_Inc_Dec:
+                config.settings.function[i].function = Track_FX_Inc_Dec;
+                break;
+
+            case Target_Track_Inc_Dec:
+                config.settings.function[i].function = Target_Track_Inc_Dec;
+                break;
+
+            default:
+                config.settings.function[i].function = BLANK;
+                break;
+            }
+
+            config.settings.function[i].additionalParameter[0] = bankSettings_current_button[2][0];
+            config.settings.function[i].additionalParameter[1] = bankSettings_current_button[2][1];
+        }
+
         // Close the file (File's destructor doesn't close the file)
         file.close();
 
-        Serial.print("Track Colors:\n\n");
-        for (int i = 0; i < 5; i++)
-        {
-            Serial.print("Track ");
-            Serial.print(i + 1);
-            Serial.print(":    ");
-            Serial.println(config.settings.TrackColor[i]);
-        }
         return true;
+    }
+}
+
+void printSettings(void)
+{
+    // Globals
+    Serial.print("\n\n\nReading Settings:\n\n");
+    Serial.print("Current Bank:            ");
+    Serial.println(config.globalSettings.currentBank);
+    Serial.print("Brightness:              ");
+    Serial.println(config.globalSettings.brightness);
+
+    Serial.println("\nTrack Colors");
+    for (int i = 0; i < 5; i++)
+    {
+        Serial.print("Track Nr.");
+        Serial.print(i + 1);
+        Serial.print(":              ");
+        switch (config.settings.TrackColor[i])
+        {
+        case RED:
+            Serial.println("Red");
+            break;
+
+        case GREEN:
+            Serial.println("Green");
+            break;
+
+        case BLUE:
+            Serial.println("Blue");
+            break;
+
+        case WHITE:
+            Serial.println("White");
+            break;
+
+        case BLACK:
+            Serial.println("Black");
+            break;
+
+        case YELLOW:
+            Serial.println("Yellow");
+            break;
+
+        case ORANGE:
+            Serial.println("Orange");
+            break;
+
+        case VIOLET:
+            Serial.println("VIOLET");
+            break;
+
+        default:
+            Serial.println("Not specified");
+            break;
+        }
+    }
+    Serial.print("\n\n");
+
+    for (int i = 0; i < 16; i++)
+    {
+        Serial.print("Button Nr.");
+        Serial.print(i + 1);
+        Serial.print(":\n");
+        Serial.print("Midi CC:                 ");
+        Serial.println(config.settings.function[i].midi_CC);
+        Serial.print("Function:                ");
+
+        switch (config.settings.function[i].function)
+        {
+        case Target_Track_Start_Stop:
+            Serial.println("Target Track Start/Stop");
+            break;
+
+        case Target_Track_Stop:
+            Serial.println("Target Track Stop");
+            break;
+
+        case Target_Track_Clear:
+            Serial.println("Target Track Clear");
+            break;
+
+        case Target_Track_Undo_redo:
+            Serial.println("Target Track Undo/Redo");
+            break;
+
+        case Target_Track_Play_Level:
+            Serial.println("Target Track Play Level");
+            break;
+
+        case All_Start_Stop:
+            Serial.println("All Start/Stop");
+            break;
+
+        case Last_Undo_Redo:
+            Serial.println("Last Undo/Redo");
+            break;
+
+        case Tap_Tempo:
+            Serial.println("Tap Tempo");
+            break;
+
+        case Bank_Up_Down:
+            Serial.println("Bank Up/Down");
+            break;
+
+        case Track_Start_Stop:
+            Serial.println("Track Start/Stop");
+            break;
+
+        case Track_Play_Rec:
+            Serial.println("Track Play/Record");
+            break;
+
+        case Track_Clear:
+            Serial.println("Track Clear");
+            break;
+
+        case Track_Undo_Redo:
+            Serial.println("Track Undo/Redo");
+            break;
+
+        case Track_Pan:
+            Serial.println("Track Pan");
+            break;
+
+        case All_Clear:
+            Serial.println("All Clear");
+            break;
+
+        case Rhythm_Level:
+            Serial.println("Rhythm Level");
+            break;
+
+        case Rhythm_Pattern:
+            Serial.println("Rhythm Pattern");
+            break;
+
+        case Memory_Level:
+            Serial.println("Memory Level");
+            break;
+
+        case Master_Comp:
+            Serial.println("Master Compressor");
+            break;
+
+        case Master_Reverb:
+            Serial.println("Master Reverb");
+            break;
+
+        case Overdub_Mode:
+            Serial.println("Overdub Mode");
+            break;
+
+        case Input_FX_On_Off:
+            Serial.println("Input Effects On/Off");
+            break;
+
+        case Input_FX_Inc_Dec:
+            Serial.println("Input Effects Increase/Decrease");
+            break;
+
+        case Track_FX_On_Off:
+            Serial.println("Track Effects On/Off");
+            break;
+
+        case Track_FX_Inc_Dec:
+            Serial.println("Track Effects Increase/Decrease");
+            break;
+
+        case Target_Track_Inc_Dec:
+            Serial.println("Target Track Increase/Decrease");
+            break;
+
+        default:
+            Serial.println("Not assigned");
+            break;
+        }
+        Serial.print("Additional Parameter 1:  ");
+        Serial.println(config.settings.function[i].additionalParameter[0]);
+        Serial.print("Additional Parameter 1:  ");
+        Serial.println(config.settings.function[i].additionalParameter[0]);
+        Serial.print("\n\n");
     }
 }
 
@@ -137,7 +426,7 @@ bool writeGlobals(void)
     File file = SD.open(filename, FILE_WRITE);
     if (!file)
     {
-        Serial.println(F("Failed to create file"));
+        Serial.println("Failed to create file");
         return false;
     }
 
@@ -152,11 +441,11 @@ bool writeGlobals(void)
     // Serialize JSON to file
     if (root.printTo(file) == 0)
     {
-        Serial.println(F("Failed to write to file"));
+        Serial.println("Failed to write to file");
     }
     else
     {
-        Serial.println(F("Successfully wrote global Settings to file."));
+        Serial.println("Successfully wrote global Settings to file.");
     }
 
     // Close the file (File's destructor doesn't close the file)
@@ -173,7 +462,7 @@ bool writeBank(uint8_t bankNr)
     File file = SD.open(filename, FILE_WRITE);
     if (!file)
     {
-        Serial.println(F("Failed to create file"));
+        Serial.println("Failed to create file");
         return false;
     }
 

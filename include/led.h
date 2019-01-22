@@ -3,7 +3,7 @@
 
 typedef enum
 {
-    RED,
+    RED = 1,
     GREEN,
     BLUE,
     WHITE,

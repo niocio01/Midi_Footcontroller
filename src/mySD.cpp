@@ -111,9 +111,11 @@ void initSD(void)
 
     readSettings();    
 
-    writeSettings();
+    // writeSettings();
 
-    printFile("/bank.txt");
+    printSettings();
+
+    //printFile("/bank.txt");
 
     
 
