@@ -108,18 +108,19 @@ void initSD(void)
         Serial.println("Failed to initialize SD library Is The Card Inserted?");
         delay(1000);
     }
-    printFile("/bank.txt");
+   
+   
+   // printFile("/bank.txt");
 
     
 
     readSettings();
-    printSettings(); 
-
+    
     writeSettings();
 
     printSettings();
 
-    printFile("/bank.txt");
+   // printFile("/bank.txt");
 
     
 

@@ -2,6 +2,7 @@
 #include <SPI.h>
 #include <ArduinoJson.h>
 #include "config.h"
+#include <stdlib.h>
 
 config_t config; // initiate the config structure
 
@@ -17,7 +18,7 @@ bool readGlobals(void)
 
     if (!root.success())
     {
-        Serial.println(F("Failed to read GlobalSettings.txt using default configuration"));
+        Serial.println(F("Failed to read GlobalSettings.txt \nusing default configuration"));
     }
 
     // Copy values from the JsonObject to the Config
@@ -30,7 +31,12 @@ bool readGlobals(void)
 
 bool readBank(uint8_t bankNr)
 {
-    const char *filename = "/bank.txt";
+    char filename[] = "/bank00.txt";
+
+    filename[5] = bankNr/10 +'0';
+    filename[6] = bankNr%10 +'0';
+
+    // const char *filename = "/bank1.txt";
     File file = SD.open(filename);
 
     size_t capacity = 16 * JSON_ARRAY_SIZE(2) + 16 * JSON_ARRAY_SIZE(3) + JSON_ARRAY_SIZE(5) + JSON_ARRAY_SIZE(16) + JSON_OBJECT_SIZE(1) + JSON_OBJECT_SIZE(2);
@@ -40,7 +46,9 @@ bool readBank(uint8_t bankNr)
 
     if (!root.success())
     {
-        Serial.println("Failed to read bank.txt using default configuration");
+        Serial.print("Failed to read ");
+        Serial.print(filename);
+        Serial.print(" using default File");
     }
 
     else
@@ -404,7 +412,7 @@ bool readSettings(void)
 
     result1 = readGlobals();
 
-    result2 = readBank(1);
+    result2 = readBank(3);
 
     if (result1 == true && result2 == true)
     {
@@ -454,7 +462,14 @@ bool writeGlobals(void)
 
 bool writeBank(uint8_t bankNr)
 {
-    char *filename = "/bank.txt";
+
+    char filename[] = "/bank00.txt";
+
+    filename[5] = bankNr/10 +'0';
+    filename[6] = bankNr%10 +'0';
+    
+    
+    // char *filename = "/bank1.txt";
     // Delete existing file, otherwise the configuration is appended to the file
     SD.remove(filename);
 
@@ -474,20 +489,19 @@ bool writeBank(uint8_t bankNr)
     JsonObject &bankSettings = root.createNestedObject("bankSettings");
 
     JsonArray &bankSettings_TrackColors = bankSettings.createNestedArray("TrackColors");
-    for (int i = 0; i < 5 ; i++)
+    for (int i = 0; i < 5; i++)
     {
         bankSettings_TrackColors.add((int)config.settings.TrackColor[i]);
     }
-    
 
-    JsonArray& bankSettings_buttons = bankSettings.createNestedArray("buttons");
+    JsonArray &bankSettings_buttons = bankSettings.createNestedArray("buttons");
 
-    for (int i = 0; i < 16 ; i++)
+    for (int i = 0; i < 16; i++)
     {
-        JsonArray& bankSettings_current_button = bankSettings_buttons.createNestedArray();
+        JsonArray &bankSettings_current_button = bankSettings_buttons.createNestedArray();
         bankSettings_current_button.add((int)config.settings.function[i].midi_CC);
         bankSettings_current_button.add((int)config.settings.function[i].function);
-        JsonArray& bankSettings_current_button_Adititional_Settings = bankSettings_current_button.createNestedArray();
+        JsonArray &bankSettings_current_button_Adititional_Settings = bankSettings_current_button.createNestedArray();
         bankSettings_current_button_Adititional_Settings.add((int)config.settings.function[i].additionalParameter[0]);
         bankSettings_current_button_Adititional_Settings.add((int)config.settings.function[i].additionalParameter[1]);
     }
@@ -512,7 +526,7 @@ bool writeSettings(void)
 
     result1 = writeGlobals();
 
-    result2 = writeBank(1);
+    result2 = writeBank(3);
 
     if (result1 == true && result2 == true)
     {
