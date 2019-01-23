@@ -390,6 +390,7 @@ bool writeGlobals(void)
 
     // Close the file (File's destructor doesn't close the file)
     file.close();
+    return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -447,6 +448,7 @@ bool writeBank(uint8_t bankNr)
         Serial.print("Failed to write to bank Nr.");
         Serial.print(bankNr);
         Serial.print(".\n");
+        return false;
     }
     else
     {
@@ -459,6 +461,7 @@ bool writeBank(uint8_t bankNr)
             Serial.print("Successfully wrote Settings for Bank Nr. ");
             Serial.println(bankNr);
         }
+        return true;
     }
 
     // Close the file (File's destructor doesn't close the file)

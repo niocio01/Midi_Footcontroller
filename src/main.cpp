@@ -12,6 +12,7 @@
 #include "mySD.h"
 
 int count = 0;
+uint32_t lastButtons = 0;
 
 void setup()
 {
@@ -36,6 +37,8 @@ void setup()
     // sdWriteTest();
 }
 
+
+
 void loop()
 {
     
@@ -47,8 +50,14 @@ void loop()
     //Serial.println(getInputs(),BIN);
     //Serial.println(digitalRead(4),BIN);
 
-   // printInputs(getInputs());
-    //delay(2000);
+
+
+    if ( lastButtons != getInputs())
+    {
+        printInputs(getInputs());
+    }
+    lastButtons = getInputs();
+    // delay(2000);
 
     //midiInputTest ();
 

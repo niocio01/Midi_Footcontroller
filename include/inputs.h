@@ -4,8 +4,8 @@
 #define BTN_BK_UP       (1 << 0)
 #define BTN_BK_DWN      (1 << 1)
 #define BTN_MODE        (1 << 2)
-#define BTN_SAVE        (1 << 3)
-#define BTN_BACK        (1 << 4)
+#define BTN_BACK        (1 << 3)
+#define BTN_SAVE        (1 << 4)
 #define BTN_SELECT      (1 << 5)
 
 #define TRACK1_PLAY     (1 << 6)
