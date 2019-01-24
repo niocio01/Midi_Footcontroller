@@ -27,11 +27,13 @@
 
 void initInputs (void);
 
-void checkInputs(void);
+void InputsISR(void);
 
 uint32_t getInputs(void);
 
 void printInputs(uint32_t buffer);
+
+void checkInputs(void);
 
 bool bottonsWerePressed(uint32_t btnMask);
 

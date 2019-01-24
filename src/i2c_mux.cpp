@@ -1,10 +1,14 @@
 // #include <Wire.h>
-
 #include "i2c_t3.h"
+
+#include <arduino.h>
+
+// #include "twi.h"  // from Wire library, so we can do bus scanning
 
 #define TCAADDR 0x70
 
-void selectMuxPort(uint8_t adress) {
+void selectMuxPort(uint8_t adress)
+{
     byte response = 0;
     if (adress > 7)
         return;
@@ -15,8 +19,8 @@ void selectMuxPort(uint8_t adress) {
 
     if (response == 0)
     {
-        Serial.print("MUX Set to Port ");
-        Serial.println(adress);
+        // Serial.print("MUX Set to Port ");
+        // Serial.println(adress);
     }
     else
     {

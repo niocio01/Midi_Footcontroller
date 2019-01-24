@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "Pins.h"
 #include "TimedTasks.h"
+#include "functionHandler.h"
 
 // ENABLE INPUT-PULLDOWN
 // Set Pint as GPIO
@@ -52,7 +53,7 @@ void initInputs (void)
  static uint32_t inputBuffer = 0;
  static uint32_t lastInputBuffer = 0;
 
-void checkInputs(void)
+void InputsISR(void)
 {
 
      inputBuffer = ((BTN_BK_UP_PINMASK)? 1 : 0)
@@ -107,15 +108,34 @@ void printInputs(uint32_t buffer)
   Serial.println(bitRead(buffer, 20));
 }
 
+uint32_t getPressedButton(void)
+{
+    uint32_t buf = wasPressedBuffer; // no longer volatile
+
+    uint32_t lsb = ( ((buf | (buf - 1)) ^ (buf - 1)) ); // in case there are more then one
+
+    wasPressedBuffer = wasPressedBuffer & ~lsb; // reset the found button
+
+    return log2(lsb); // extract the position and return it
+
+    // http://www.goldsborough.me/bits/c++/low-level/problems/2015/10/11/23-52-02-bit_manipulation/
+}
+
+void checkInputs(void)
+{
+    uint32_t buf = wasPressedBuffer;
+    
+    if (buf != 0)
+    {
+        uint32_t button = getPressedButton();
+        
+        buttonPressed(button);
+    }
+}
+
 bool bottonsWerePressed(uint32_t btnMask)
 {
-   // printInputs(wasHiBuffer);
-   // printInputs(wasLowBuffer);
-   // printInputs(inputBuffer);
-   
-
-
-    if( (~wasPressedBuffer & btnMask) ) 
+   if( (~wasPressedBuffer & btnMask) ) 
     {
         return false; // comparison was not equal to 0 (true), so a asked button was not pressed
     }
@@ -123,6 +143,5 @@ bool bottonsWerePressed(uint32_t btnMask)
     {
         wasPressedBuffer = wasPressedBuffer & ~btnMask; // reset the asked buttons
         return true;
-        printInputs(wasPressedBuffer);
     }
 }

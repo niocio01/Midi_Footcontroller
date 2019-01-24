@@ -3,4 +3,8 @@
 
     void displaySetup(void);
 
+    void setUpdateFlag(void);
+
+    void updateDisplay(void);
+
 #endif // !DISPLAY_H

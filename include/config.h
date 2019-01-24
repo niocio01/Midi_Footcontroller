@@ -76,19 +76,19 @@ typedef struct // master Struct Of current Config
 
 
 
-bool readGlobals(void);
+void readGlobals(void);
 
-bool readBank(uint8_t bankNr);
+void readBank(uint8_t bankNr);
 
-bool readSettings(void);
+void readSettings(void);
 
 
 
-bool writeGlobals(void);
+void writeGlobals(void);
 
-bool writeBank(uint8_t bankNr);
+void writeBank(uint8_t bankNr);
 
-bool writeSettings(void);
+void writeSettings(void);
 
 
 void printSettings(void);

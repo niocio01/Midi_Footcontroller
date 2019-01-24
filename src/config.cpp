@@ -10,7 +10,7 @@ config_t config; // initiate the config structure
 //                                                       readGlobals                                                          //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool readGlobals(void)
+void readGlobals(void)
 {
     const char *filename = "/globals.txt";
     File file = SD.open(filename);
@@ -30,8 +30,6 @@ bool readGlobals(void)
 
         writeGlobals();
         Serial.print("\n");
-
-        return true;
     }
 
     else // File found
@@ -42,8 +40,6 @@ bool readGlobals(void)
 
         // Close the file (File's destructor doesn't close the file)
         file.close();
-
-        return true;
     }
 }
 
@@ -51,7 +47,7 @@ bool readGlobals(void)
 //                                                         readBank                                                           //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool readBank(uint8_t bankNr)
+void readBank(uint8_t bankNr)
 {
     char filename[] = "/bank00.txt";
 
@@ -75,8 +71,6 @@ bool readBank(uint8_t bankNr)
             Serial.println(" does not exist, using Values from Default bank File.");
             readBank(00);      // get the values from the existing Default File
             writeBank(bankNr); // write these into the asked Bank File
-
-            return true; // exit, otherwise it will read the same values in again. (just a time saver)
         }
 
         else // the default File does not exist, so create it from scratch
@@ -173,8 +167,6 @@ bool readBank(uint8_t bankNr)
             config.settings.function[15].additionalParameter[1] = 0;
 
             writeBank(0);      // use these defaults to write the Default File
-
-            return true; // exit, otherwise it will read the same values in again. (just a time saver)
         }
     }
 
@@ -347,8 +339,8 @@ bool readBank(uint8_t bankNr)
 
         // Close the file (File's destructor doesn't close the file)
         file.close();
-
-        return true;
+        Serial.print("Loaded Bank Nr. ");
+        Serial.println(bankNr);
     }
 }
 
@@ -356,7 +348,7 @@ bool readBank(uint8_t bankNr)
 //                                                        writeGlobals                                                        //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool writeGlobals(void)
+void writeGlobals(void)
 {
     char *filename = "/globals.txt";
     // Delete existing file, otherwise the configuration is appended to the file
@@ -367,7 +359,6 @@ bool writeGlobals(void)
     if (!file)
     {
         Serial.println("Failed to create file");
-        return false;
     }
 
     size_t capacity = JSON_OBJECT_SIZE(2) + 40;
@@ -390,14 +381,13 @@ bool writeGlobals(void)
 
     // Close the file (File's destructor doesn't close the file)
     file.close();
-    return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                          writeBank                                                         //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool writeBank(uint8_t bankNr)
+void writeBank(uint8_t bankNr)
 {
 
     char filename[] = "/bank00.txt";
@@ -414,7 +404,6 @@ bool writeBank(uint8_t bankNr)
     if (!file)
     {
         Serial.println("Failed to create file");
-        return false;
     }
 
     size_t capacity = 16 * JSON_ARRAY_SIZE(2) + 16 * JSON_ARRAY_SIZE(3) + JSON_ARRAY_SIZE(5) + JSON_ARRAY_SIZE(16) + JSON_OBJECT_SIZE(1) + JSON_OBJECT_SIZE(2);
@@ -448,7 +437,7 @@ bool writeBank(uint8_t bankNr)
         Serial.print("Failed to write to bank Nr.");
         Serial.print(bankNr);
         Serial.print(".\n");
-        return false;
+        // return false;
     }
     else
     {
@@ -461,7 +450,7 @@ bool writeBank(uint8_t bankNr)
             Serial.print("Successfully wrote Settings for Bank Nr. ");
             Serial.println(bankNr);
         }
-        return true;
+        // return true;
     }
 
     // Close the file (File's destructor doesn't close the file)
@@ -663,43 +652,20 @@ void printSettings(void)
 //                                                        readSettings                                                        //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool readSettings(void)
+void readSettings(void)
 {
+    readGlobals();
 
-    bool result1, result2;
-
-    result1 = readGlobals();
-
-    result2 = readBank(config.globalSettings.currentBank);
-
-    if (result1 == true && result2 == true)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    readBank(config.globalSettings.currentBank);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                       writeSettings                                                        //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool writeSettings(void)
+void writeSettings(void)
 {
-    bool result1, result2;
+   writeGlobals();
 
-    result1 = writeGlobals();
-
-    result2 = writeBank(3);
-
-    if (result1 == true && result2 == true)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+   writeBank(config.globalSettings.currentBank);
 }

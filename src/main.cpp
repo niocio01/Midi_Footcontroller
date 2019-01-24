@@ -10,6 +10,7 @@
 #include "myMidi.h"
 #include "led.h"
 #include "mySD.h"
+#include "i2c_mux.h"
 
 int count = 0;
 uint32_t lastButtons = 0;
@@ -24,7 +25,9 @@ void setup()
   //  delay(2000);
   //  Serial.println("Serial Connection Established.");
 
-    //displaySetup();
+    initSD();
+
+    displaySetup();
 
     initInputs();
 
@@ -32,7 +35,7 @@ void setup()
 
     //initLed();
 
-    initSD();
+    
 
     // sdWriteTest();
 }
@@ -41,6 +44,10 @@ void setup()
 
 void loop()
 {
+    checkInputs();
+
+    updateDisplay();
+
     
     //delay(2000);
 
@@ -52,24 +59,16 @@ void loop()
 
 
 
-    if ( lastButtons != getInputs())
-    {
-        printInputs(getInputs());
-    }
-    lastButtons = getInputs();
-    // delay(2000);
+  //  if ( lastButtons != getInputs())
+  //  {
+  //      printInputs(getInputs());
+  //  }
+  //  lastButtons = getInputs();
+    //delay(2000);
 
     //midiInputTest ();
 
     //midiOutputTest();
 
     //ledTest();
-
-     if (bottonsWerePressed(BTN_BACK))
-     {
-        count ++;
-        Serial.print("Back Pressed ");
-        Serial.print(count);
-        Serial.print("\n");
-     }
 }

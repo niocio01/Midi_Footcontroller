@@ -47,7 +47,7 @@ volatile bool alternate = 0;
 void task0(void)
 {        
     FTM3_C0V += uS_TO_TIMER_COMPARE(UPDATE_INTERVALL);
-    checkInputs();
+    InputsISR();
 }
 
 
