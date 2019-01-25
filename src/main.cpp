@@ -31,13 +31,15 @@ void setup()
 
     initInputs();
 
-    //midiSetup();
+    midiSetup();
 
     //initLed();
 
     
 
     // sdWriteTest();
+
+    setUpdateFlag();
 }
 
 

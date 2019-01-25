@@ -7,4 +7,6 @@
 
     void midiOutputTest(void);
 
+    void sendMidiCC(uint8_t cc, uint8_t val);
+
 #endif //  MYMIDI_H

@@ -27,6 +27,7 @@ void readGlobals(void)
         // define default Values
         config.globalSettings.currentBank = 1;
         config.globalSettings.brightness = 100;
+        config.globalSettings.midiChannel = 1;
 
         writeGlobals();
         Serial.print("\n");
@@ -37,6 +38,7 @@ void readGlobals(void)
         // Copy values from the JsonObject to the Config
         config.globalSettings.currentBank = root["currentBank"];
         config.globalSettings.brightness = root["brightness"];
+        config.globalSettings.midiChannel = root["midiChannel"];
 
         // Close the file (File's destructor doesn't close the file)
         file.close();
@@ -328,6 +330,14 @@ void readBank(uint8_t bankNr)
                 config.settings.function[i].function = Mic_Mute;
                 break;
 
+            case Target_Track_Inc:
+                config.settings.function[i].function = Target_Track_Inc;
+                break;
+
+            case Target_Track_Dec:
+                config.settings.function[i].function = Target_Track_Dec;
+                break;
+
             default:
                 config.settings.function[i].function = BLANK;
                 break;
@@ -368,6 +378,7 @@ void writeGlobals(void)
 
     root["currentBank"] = config.globalSettings.currentBank;
     root["brightness"] = config.globalSettings.brightness;
+    root["midiChannel"] = config.globalSettings.midiChannel;
 
     // Serialize JSON to file
     if (root.printTo(file) == 0)
@@ -469,6 +480,8 @@ void printSettings(void)
     Serial.println(config.globalSettings.currentBank);
     Serial.print("Brightness:              ");
     Serial.println(config.globalSettings.brightness);
+    Serial.print("Midi Channel:            ");
+    Serial.println(config.globalSettings.midiChannel);
 
     Serial.println("\nTrack Colors");
     for (int i = 0; i < 5; i++)
@@ -634,6 +647,14 @@ void printSettings(void)
 
         case Mic_Mute:
             Serial.println("Mute Microphone");
+            break;
+
+        case Target_Track_Inc:
+            Serial.println("Increase Target Track");
+            break;
+
+        case Target_Track_Dec:
+            Serial.println("Decrease Target Track");
             break;
 
         default:

@@ -14,7 +14,7 @@
 //U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/U8X8_PIN_NONE);
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/U8X8_PIN_NONE);
 
-bool updateDisplayNeccessary = true;
+bool updateDisplayNeccessary = false;
 
 void displaySetup(void)
 {
@@ -53,19 +53,24 @@ void displaySetup(void)
 
 void drawBank()
 {
+    uint8_t width = 0;
     u8g2.setFont(u8g2_font_profont29_tf);
     if (getBank() < 10)
     {
-        u8g2.setCursor(18, 22);
+        width = u8g2.getStrWidth("Bank 0");
+        u8g2.setCursor( (128 - width) / 2 , ( u8g2.getAscent() + 2  ) );
     }
     else
     {
-        u8g2.setCursor(9, 22);
+        width = u8g2.getStrWidth("Bank 00");
+        u8g2.setCursor( (128 - width) / 2 , ( u8g2.getAscent() + 2 ) );
     }
     u8g2.print("Bank ");
-    u8g2.drawHLine(0,27,128);
-    u8g2.drawHLine(0,28,128);
+    u8g2.drawHLine(0,u8g2.getAscent() + 5 ,128);
+    u8g2.drawHLine(0,u8g2.getAscent() + 6 ,128);
     u8g2.print(getBank());
+    u8g2.setCursor( 2 , 44);
+    u8g2.print(u8g2.getAscent());
 }
 
 void setUpdateFlag(void)

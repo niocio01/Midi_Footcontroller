@@ -99,8 +99,7 @@ void initSD(void)
 {
 
     Serial.begin(9600);
-    while (!Serial)
-        continue;
+    delay(2000);
 
     // Initialize SD library
     while (!SD.begin(chipSelect))
@@ -108,11 +107,6 @@ void initSD(void)
         Serial.println("Failed to initialize SD library Is The Card Inserted?");
         delay(1000);
     }
-   
-   
-   // printFile("/bank.txt");
-
-    
 
     readSettings();
     

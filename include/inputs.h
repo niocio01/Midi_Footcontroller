@@ -38,4 +38,8 @@ void checkInputs(void);
 bool bottonsWerePressed(uint32_t btnMask);
 
 
+// function to rout to the corresponding button Function
+void buttonPressed(uint32_t button);
+
+
 #endif

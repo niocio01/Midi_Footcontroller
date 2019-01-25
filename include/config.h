@@ -7,8 +7,7 @@
 
 typedef enum // all the possible Function Types get united
 {
-    BLANK,
-    Target_Track_Start_Stop,
+    Target_Track_Start_Stop = 1,
     Target_Track_Stop,
     Target_Track_Clear,
     Target_Track_Undo_redo,
@@ -18,7 +17,7 @@ typedef enum // all the possible Function Types get united
     Tap_Tempo,
     Bank_Up_Down,
 
-
+    // V1 Functions
     Track_Start_Stop,
     Track_Play_Rec,
     Track_Clear,
@@ -36,7 +35,13 @@ typedef enum // all the possible Function Types get united
     Track_FX_On_Off,
     Track_FX_Inc_Dec,
     Target_Track_Inc_Dec,
+
+
+    // Custom Functions
     Mic_Mute,
+    Target_Track_Inc,
+    Target_Track_Dec,
+    BLANK = 0,
 
 } Function_Type_t ;
 
@@ -61,6 +66,7 @@ typedef struct
 {
     uint8_t currentBank;
     uint8_t brightness;
+    uint8_t midiChannel;
 
 } globalSettings_t;
 

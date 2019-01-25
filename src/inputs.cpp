@@ -2,6 +2,7 @@
 #include "Pins.h"
 #include "TimedTasks.h"
 #include "functionHandler.h"
+#include "inputs.h"
 
 // ENABLE INPUT-PULLDOWN
 // Set Pint as GPIO
@@ -13,8 +14,7 @@ volatile uint32_t debouncedInputBuffer = 0;
 volatile uint32_t LastDebouncedInputBuffer = 0;
 volatile uint32_t wasPressedBuffer = 0;
 
-
-void initInputs (void)
+void initInputs(void)
 {
 
     initTimedTasks();
@@ -47,41 +47,20 @@ void initInputs (void)
     CSTM_SW3_CONFIG = DIGITALINPUT;
     CSTM_SW4_CONFIG = DIGITALINPUT;
     CSTM_SW5_CONFIG = DIGITALINPUT;
-
 }
 
- static uint32_t inputBuffer = 0;
- static uint32_t lastInputBuffer = 0;
+static uint32_t inputBuffer = 0;
+static uint32_t lastInputBuffer = 0;
 
 void InputsISR(void)
 {
 
-     inputBuffer = ((BTN_BK_UP_PINMASK)? 1 : 0)
-                    | (((BTN_BK_DWN_PINMASK)? 1 : 0) <<1 )
-                    | (((BTN_MODE_PINMASK)? 1 : 0) <<2 )
-                    | (((BTN_BACK_PINMASK)? 1 : 0) <<3 )
-                    | (((BTN_SAVE_PINMASK)? 1 : 0) <<4 )
-                    | (((BTN_SELECT_PINMASK)? 1 : 0) <<5 )
-                    | (((TRACK1_PLAY_PINMASK)? 1 : 0) <<6 )
-                    | (((TRACK1_OVD_PINMASK)? 1 : 0) <<7 )
-                    | (((TRACK2_PLAY_PINMASK)? 1 : 0) <<8 )
-                    | (((TRACK2_OVD_PINMASK)? 1 : 0) <<9 )
-                    | (((TRACK3_PLAY_PINMASK)? 1 : 0) <<10 )
-                    | (((TRACK3_OVD_PINMASK)? 1 : 0) <<11 )
-                    | (((TRACK4_PLAY_PINMASK)? 1 : 0) <<12 )
-                    | (((TRACK4_OVD_PINMASK)? 1 : 0) <<13 )
-                    | (((TRACK5_PLAY_PINMASK)? 1 : 0) <<14 )
-                    | (((TRACK5_OVD_PINMASK)? 1 : 0) <<15 )
-                    | (((CSTM_SW1_PINMASK)? 1 : 0) <<16 )
-                    | (((CSTM_SW2_PINMASK)? 1 : 0) <<17 )
-                    | (((CSTM_SW3_PINMASK)? 1 : 0) <<18 )
-                    | (((CSTM_SW4_PINMASK)? 1 : 0) <<19 )
-                    | (((CSTM_SW5_PINMASK)? 1 : 0) <<20 );
+    inputBuffer = ((BTN_BK_UP_PINMASK) ? 1 : 0) | (((BTN_BK_DWN_PINMASK) ? 1 : 0) << 1) | (((BTN_MODE_PINMASK) ? 1 : 0) << 2) | (((BTN_BACK_PINMASK) ? 1 : 0) << 3) | (((BTN_SAVE_PINMASK) ? 1 : 0) << 4) | (((BTN_SELECT_PINMASK) ? 1 : 0) << 5) | (((TRACK1_PLAY_PINMASK) ? 1 : 0) << 6) | (((TRACK1_OVD_PINMASK) ? 1 : 0) << 7) | (((TRACK2_PLAY_PINMASK) ? 1 : 0) << 8) | (((TRACK2_OVD_PINMASK) ? 1 : 0) << 9) | (((TRACK3_PLAY_PINMASK) ? 1 : 0) << 10) | (((TRACK3_OVD_PINMASK) ? 1 : 0) << 11) | (((TRACK4_PLAY_PINMASK) ? 1 : 0) << 12) | (((TRACK4_OVD_PINMASK) ? 1 : 0) << 13) | (((TRACK5_PLAY_PINMASK) ? 1 : 0) << 14) | (((TRACK5_OVD_PINMASK) ? 1 : 0) << 15) | (((CSTM_SW1_PINMASK) ? 1 : 0) << 16) | (((CSTM_SW2_PINMASK) ? 1 : 0) << 17) | (((CSTM_SW3_PINMASK) ? 1 : 0) << 18) | (((CSTM_SW4_PINMASK) ? 1 : 0) << 19) | (((CSTM_SW5_PINMASK) ? 1 : 0) << 20);
     // if the buffer didn't change, eighter because nothing happended,
-    // or because the previously pressed Button has finished bouncing 
+    // or because the previously pressed Button has finished bouncing
     // write the current state to the debounced buffer
 
-    if (inputBuffer == lastInputBuffer) 
+    if (inputBuffer == lastInputBuffer)
     {
         debouncedInputBuffer = inputBuffer;
     }
@@ -89,7 +68,7 @@ void InputsISR(void)
     // write the current Buffer as LastBuffer for the next time
     lastInputBuffer = inputBuffer;
 
-    wasPressedBuffer = wasPressedBuffer | ( (LastDebouncedInputBuffer xor debouncedInputBuffer) & debouncedInputBuffer ) ; // search positive flanks and add them to Buffer
+    wasPressedBuffer = wasPressedBuffer | ((LastDebouncedInputBuffer xor debouncedInputBuffer) & debouncedInputBuffer); // search positive flanks and add them to Buffer
 
     LastDebouncedInputBuffer = debouncedInputBuffer;
 }
@@ -101,22 +80,22 @@ uint32_t getInputs(void)
 
 void printInputs(uint32_t buffer)
 {
-  for (int i = 0; i <= 19; i++)
-  {
-    Serial.print(bitRead(buffer, i));
-  }
-  Serial.println(bitRead(buffer, 20));
+    for (int i = 0; i <= 19; i++)
+    {
+        Serial.print(bitRead(buffer, i));
+    }
+    Serial.println(bitRead(buffer, 20));
 }
 
 uint32_t getPressedButton(void)
 {
     uint32_t buf = wasPressedBuffer; // no longer volatile
 
-    uint32_t lsb = ( ((buf | (buf - 1)) ^ (buf - 1)) ); // in case there are more then one
+    uint32_t lsb = (((buf | (buf - 1)) ^ (buf - 1))); // in case there are more then one
 
     wasPressedBuffer = wasPressedBuffer & ~lsb; // reset the found button
 
-    return log2(lsb); // extract the position and return it
+    return lsb; // return it
 
     // http://www.goldsborough.me/bits/c++/low-level/problems/2015/10/11/23-52-02-bit_manipulation/
 }
@@ -124,18 +103,18 @@ uint32_t getPressedButton(void)
 void checkInputs(void)
 {
     uint32_t buf = wasPressedBuffer;
-    
+
     if (buf != 0)
     {
         uint32_t button = getPressedButton();
-        
+
         buttonPressed(button);
     }
 }
 
 bool bottonsWerePressed(uint32_t btnMask)
 {
-   if( (~wasPressedBuffer & btnMask) ) 
+    if ((~wasPressedBuffer & btnMask))
     {
         return false; // comparison was not equal to 0 (true), so a asked button was not pressed
     }
@@ -143,5 +122,45 @@ bool bottonsWerePressed(uint32_t btnMask)
     {
         wasPressedBuffer = wasPressedBuffer & ~btnMask; // reset the asked buttons
         return true;
+    }
+}
+
+void buttonPressed(uint32_t button)
+{
+    if (button > BTN_SELECT)
+    {
+        footButtonPressed((int)log2(button >> 6)); // get Footswitch Number (0 - 14)
+    }
+    else
+    {
+        switch (button)
+        {
+        case BTN_BK_UP:
+            bankUpPressed();
+            break;
+
+        case BTN_BK_DWN:
+            bankDownPressed();
+            break;
+
+        case BTN_MODE:
+            modePressed();
+            break;
+
+        case BTN_BACK:
+            backPressed();
+            break;
+
+        case BTN_SAVE:
+            savePressed();
+            break;
+
+        case BTN_SELECT:
+            selectPressed();
+            break;
+
+        default:
+            break;
+        }
     }
 }
