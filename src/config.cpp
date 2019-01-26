@@ -5,6 +5,9 @@
 #include <stdlib.h>
 
 config_t config; // initiate the config structure
+const size_t globalCapacity = JSON_OBJECT_SIZE(2) + 40;
+const size_t bankCapacity = 16*JSON_ARRAY_SIZE(2) + 16*JSON_ARRAY_SIZE(3) + JSON_ARRAY_SIZE(5) + JSON_ARRAY_SIZE(7) + JSON_ARRAY_SIZE(16) + JSON_OBJECT_SIZE(1) + JSON_OBJECT_SIZE(3);
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                       readGlobals                                                          //
@@ -15,8 +18,7 @@ void readGlobals(void)
     const char *filename = "/globals.txt";
     File file = SD.open(filename);
 
-    size_t capacity = JSON_OBJECT_SIZE(2) + 40;
-    DynamicJsonBuffer jsonBuffer(capacity);
+    DynamicJsonBuffer jsonBuffer(globalCapacity);
 
     JsonObject &root = jsonBuffer.parseObject(file);
 
@@ -59,8 +61,8 @@ void readBank(uint8_t bankNr)
     // const char *filename = "/bank1.txt";
     File file = SD.open(filename);
 
-    size_t capacity = 16 * JSON_ARRAY_SIZE(2) + 16 * JSON_ARRAY_SIZE(3) + JSON_ARRAY_SIZE(5) + JSON_ARRAY_SIZE(16) + JSON_OBJECT_SIZE(1) + JSON_OBJECT_SIZE(2);
-    DynamicJsonBuffer jsonBuffer(capacity);
+    
+    DynamicJsonBuffer jsonBuffer(bankCapacity);
 
     JsonObject &root = jsonBuffer.parseObject(file);
 
@@ -82,60 +84,68 @@ void readBank(uint8_t bankNr)
 
             // Define Default Values
 
+            config.settings.TargetTrackCC[Inc] = 1;
+            config.settings.TargetTrackCC[Dec] = 2;
+            config.settings.TargetTrackCC[Play_Rec] = 3;
+            config.settings.TargetTrackCC[Stop] = 4;
+            config.settings.TargetTrackCC[Clear] = 5;
+            config.settings.TargetTrackCC[Undo_Redo] = 6;
+            config.settings.TargetTrackCC[Play_Level] = 7;
+
             config.settings.TrackColor[0] = RED;
             config.settings.TrackColor[1] = BLUE;
             config.settings.TrackColor[2] = GREEN;
             config.settings.TrackColor[3] = ORANGE;
             config.settings.TrackColor[4] = VIOLET;
 
-            config.settings.function[0].midi_CC = 1;
-            config.settings.function[0].function = Track_Start_Stop;
-            config.settings.function[0].additionalParameter[0] = 0;
+            config.settings.function[0].midi_CC = 0;
+            config.settings.function[0].function = Select_Track_Play_Rec;
+            config.settings.function[0].additionalParameter[0] = 1; // track 1
             config.settings.function[0].additionalParameter[1] = 0;
 
-            config.settings.function[1].midi_CC = 2;
-            config.settings.function[1].function = Track_Play_Rec;
-            config.settings.function[1].additionalParameter[0] = 0;
+            config.settings.function[1].midi_CC = 0;
+            config.settings.function[1].function = Select_Track_Start_Stop;
+            config.settings.function[1].additionalParameter[0] = 1; // track 1
             config.settings.function[1].additionalParameter[1] = 0;
 
-            config.settings.function[2].midi_CC = 3;
-            config.settings.function[2].function = Track_Start_Stop;
-            config.settings.function[2].additionalParameter[0] = 0;
+            config.settings.function[2].midi_CC = 0;
+            config.settings.function[2].function = Select_Track_Play_Rec;
+            config.settings.function[2].additionalParameter[0] = 2; // track 2
             config.settings.function[2].additionalParameter[1] = 0;
 
-            config.settings.function[3].midi_CC = 4;
-            config.settings.function[3].function = Track_Play_Rec;
-            config.settings.function[3].additionalParameter[0] = 0;
+            config.settings.function[3].midi_CC = 0;
+            config.settings.function[3].function = Select_Track_Start_Stop;
+            config.settings.function[3].additionalParameter[0] = 2; // track 2
             config.settings.function[3].additionalParameter[1] = 0;
 
-            config.settings.function[4].midi_CC = 5;
-            config.settings.function[4].function = Track_Start_Stop;
-            config.settings.function[4].additionalParameter[0] = 0;
+            config.settings.function[4].midi_CC = 0;
+            config.settings.function[4].function = Select_Track_Play_Rec;
+            config.settings.function[4].additionalParameter[0] = 3; // track 3
             config.settings.function[4].additionalParameter[1] = 0;
 
-            config.settings.function[5].midi_CC = 6;
-            config.settings.function[5].function = Track_Play_Rec;
-            config.settings.function[5].additionalParameter[0] = 0;
+            config.settings.function[5].midi_CC = 0;
+            config.settings.function[5].function = Select_Track_Start_Stop;
+            config.settings.function[5].additionalParameter[0] = 3; // track 3
             config.settings.function[5].additionalParameter[1] = 0;
 
-            config.settings.function[6].midi_CC = 7;
-            config.settings.function[6].function = Track_Start_Stop;
-            config.settings.function[6].additionalParameter[0] = 0;
+            config.settings.function[6].midi_CC = 0;
+            config.settings.function[6].function = Select_Track_Play_Rec;
+            config.settings.function[6].additionalParameter[0] = 4; // track 4
             config.settings.function[6].additionalParameter[1] = 0;
 
-            config.settings.function[7].midi_CC = 8;
-            config.settings.function[7].function = Track_Play_Rec;
-            config.settings.function[7].additionalParameter[0] = 0;
+            config.settings.function[7].midi_CC = 0;
+            config.settings.function[7].function = Select_Track_Start_Stop;
+            config.settings.function[7].additionalParameter[0] = 4; // track 4
             config.settings.function[7].additionalParameter[1] = 0;
 
-            config.settings.function[8].midi_CC = 9;
-            config.settings.function[8].function = Track_Start_Stop;
-            config.settings.function[8].additionalParameter[0] = 0;
+            config.settings.function[8].midi_CC = 0;
+            config.settings.function[8].function = Select_Track_Play_Rec;
+            config.settings.function[8].additionalParameter[0] = 5; // track 5
             config.settings.function[8].additionalParameter[1] = 0;
 
-            config.settings.function[9].midi_CC = 10;
-            config.settings.function[9].function = Track_Play_Rec;
-            config.settings.function[9].additionalParameter[0] = 0;
+            config.settings.function[9].midi_CC = 0;
+            config.settings.function[9].function = Select_Track_Start_Stop;
+            config.settings.function[9].additionalParameter[0] = 5; // track 5
             config.settings.function[9].additionalParameter[1] = 0;
 
             config.settings.function[10].midi_CC = 11;
@@ -168,12 +178,21 @@ void readBank(uint8_t bankNr)
             config.settings.function[15].additionalParameter[0] = 0;
             config.settings.function[15].additionalParameter[1] = 0;
 
-            writeBank(0);      // use these defaults to write the Default File
+            writeBank(0); // use these defaults to write the Default File
         }
     }
 
     else // specified file found and readable
     {
+
+        JsonObject &bankSettings = root["bankSettings"];
+
+        JsonArray& bankSettings_TargetTrackCC = bankSettings["TargetTrackCC"];
+        for (int i = 0 ; i < 7; i++)
+        {
+            config.settings.TargetTrackCC[i] = bankSettings_TargetTrackCC[i];
+        }
+
         JsonArray &bankSettings_TrackColors = root["bankSettings"]["TrackColors"];
 
         // get Colors for tracks from array and store in RAM
@@ -222,8 +241,46 @@ void readBank(uint8_t bankNr)
 
             switch (bankSettings_current_button.get<int>(1))
             {
-            case Target_Track_Start_Stop:
-                config.settings.function[i].function = Target_Track_Start_Stop;
+
+            case Mic_Mute:
+                config.settings.function[i].function = Mic_Mute;
+                break;
+
+            case Target_Track_Inc:
+                config.settings.function[i].function = Target_Track_Inc;
+                break;
+
+            case Target_Track_Dec:
+                config.settings.function[i].function = Target_Track_Dec;
+                break;
+
+            case Select_Track_Play_Rec:
+                config.settings.function[i].function = Select_Track_Play_Rec;
+                break;
+
+            case Select_Track_Stop:
+                config.settings.function[i].function = Select_Track_Stop;
+                break;
+
+            case Select_Track_Start_Stop:
+                config.settings.function[i].function = Select_Track_Start_Stop;
+                break;
+
+            case Select_Track_Clear:
+                config.settings.function[i].function = Select_Track_Clear;
+                break;
+
+            case Select_Track_Undo_redo:
+                config.settings.function[i].function = Select_Track_Undo_redo;
+                break;
+
+            case Select_Track_Play_Level:
+                config.settings.function[i].function = Select_Track_Play_Level;
+                break;
+
+            // V1 Functions
+            case Target_Track_Play_Rec:
+                config.settings.function[i].function = Target_Track_Play_Rec;
                 break;
 
             case Target_Track_Stop:
@@ -258,6 +315,7 @@ void readBank(uint8_t bankNr)
                 config.settings.function[i].function = Bank_Up_Down;
                 break;
 
+            // V2 Functions
             case Track_Start_Stop:
                 config.settings.function[i].function = Track_Start_Stop;
                 break;
@@ -322,22 +380,6 @@ void readBank(uint8_t bankNr)
                 config.settings.function[i].function = Track_FX_Inc_Dec;
                 break;
 
-            case Target_Track_Inc_Dec:
-                config.settings.function[i].function = Target_Track_Inc_Dec;
-                break;
-
-            case Mic_Mute:
-                config.settings.function[i].function = Mic_Mute;
-                break;
-
-            case Target_Track_Inc:
-                config.settings.function[i].function = Target_Track_Inc;
-                break;
-
-            case Target_Track_Dec:
-                config.settings.function[i].function = Target_Track_Dec;
-                break;
-
             default:
                 config.settings.function[i].function = BLANK;
                 break;
@@ -371,8 +413,7 @@ void writeGlobals(void)
         Serial.println("Failed to create file");
     }
 
-    size_t capacity = JSON_OBJECT_SIZE(2) + 40;
-    DynamicJsonBuffer jsonBuffer(capacity);
+    DynamicJsonBuffer jsonBuffer(globalCapacity);
 
     JsonObject &root = jsonBuffer.createObject();
 
@@ -417,12 +458,17 @@ void writeBank(uint8_t bankNr)
         Serial.println("Failed to create file");
     }
 
-    size_t capacity = 16 * JSON_ARRAY_SIZE(2) + 16 * JSON_ARRAY_SIZE(3) + JSON_ARRAY_SIZE(5) + JSON_ARRAY_SIZE(16) + JSON_OBJECT_SIZE(1) + JSON_OBJECT_SIZE(2);
-    DynamicJsonBuffer jsonBuffer(capacity);
+    DynamicJsonBuffer jsonBuffer(bankCapacity);
 
     JsonObject &root = jsonBuffer.createObject();
 
     JsonObject &bankSettings = root.createNestedObject("bankSettings");
+
+    JsonArray& bankSettings_TargetTrackCC = bankSettings.createNestedArray("TargetTrackCC");
+    for (int i = 0 ; i < 7 ; i++)
+    {
+        bankSettings_TargetTrackCC.add( config.settings.TargetTrackCC[i] );
+    }
 
     JsonArray &bankSettings_TrackColors = bankSettings.createNestedArray("TrackColors");
     for (int i = 0; i < 5; i++)
@@ -431,7 +477,6 @@ void writeBank(uint8_t bankNr)
     }
 
     JsonArray &bankSettings_buttons = bankSettings.createNestedArray("buttons");
-
     for (int i = 0; i < 16; i++)
     {
         JsonArray &bankSettings_current_button = bankSettings_buttons.createNestedArray();
@@ -482,6 +527,22 @@ void printSettings(void)
     Serial.println(config.globalSettings.brightness);
     Serial.print("Midi Channel:            ");
     Serial.println(config.globalSettings.midiChannel);
+
+    Serial.println("\nTarget Track CC's");
+    Serial.print("Target Increase:         ");
+    Serial.println(config.settings.TargetTrackCC[Inc]);
+    Serial.print("Target Decrease:         ");
+    Serial.println(config.settings.TargetTrackCC[Dec]);
+    Serial.print("Target Play/Record:      ");
+    Serial.println(config.settings.TargetTrackCC[Play_Rec]);
+    Serial.print("Target Stop:             ");
+    Serial.println(config.settings.TargetTrackCC[Stop]);
+    Serial.print("Target Clear:            ");
+    Serial.println(config.settings.TargetTrackCC[Clear]);
+    Serial.print("Target Undo/Redo:        ");
+    Serial.println(config.settings.TargetTrackCC[Undo_Redo]);
+    Serial.print("Target Play Level:       ");
+    Serial.println(config.settings.TargetTrackCC[Play_Level]);
 
     Serial.println("\nTrack Colors");
     for (int i = 0; i < 5; i++)
@@ -541,8 +602,49 @@ void printSettings(void)
 
         switch (config.settings.function[i].function)
         {
-        case Target_Track_Start_Stop:
-            Serial.println("Target Track Start/Stop");
+        
+        case Mic_Mute:
+            Serial.println("Mute Microphone");
+            break;
+
+        case Target_Track_Inc:
+            Serial.println("Increase Target Track");
+            break;
+
+        case Target_Track_Dec:
+            Serial.println("Decrease Target Track");
+            break;
+
+        case Select_Track_Play_Rec:
+            Serial.println("Select Track and Play/Record");
+            break;
+
+        case Select_Track_Stop:
+            Serial.println("Select Track and Stop");
+            break;
+
+        case Select_Track_Start_Stop:
+            Serial.println("Select Track and Start/Stop");
+            break;
+
+        case Select_Track_Clear:
+            Serial.println("Select Track and Clear");
+            break;
+
+        case Select_Track_Undo_redo:
+            Serial.println("Select Track and Undo/Redo");
+            break;
+
+        case Select_Track_Play_Level:
+            Serial.println("Select Track and Adjust Play Level");
+            break;
+
+        
+
+
+        // V1 Functions
+        case Target_Track_Play_Rec:
+            Serial.println("Target Track Play/Record");
             break;
 
         case Target_Track_Stop:
@@ -577,6 +679,7 @@ void printSettings(void)
             Serial.println("Bank Up/Down");
             break;
 
+        // V2 Functions
         case Track_Start_Stop:
             Serial.println("Track Start/Stop");
             break;
@@ -641,22 +744,6 @@ void printSettings(void)
             Serial.println("Track Effects Increase/Decrease");
             break;
 
-        case Target_Track_Inc_Dec:
-            Serial.println("Target Track Increase/Decrease");
-            break;
-
-        case Mic_Mute:
-            Serial.println("Mute Microphone");
-            break;
-
-        case Target_Track_Inc:
-            Serial.println("Increase Target Track");
-            break;
-
-        case Target_Track_Dec:
-            Serial.println("Decrease Target Track");
-            break;
-
         default:
             Serial.println("Not assigned");
             break;
@@ -664,7 +751,7 @@ void printSettings(void)
         Serial.print("Additional Parameter 1:  ");
         Serial.println(config.settings.function[i].additionalParameter[0]);
         Serial.print("Additional Parameter 2:  ");
-        Serial.println(config.settings.function[i].additionalParameter[0]);
+        Serial.println(config.settings.function[i].additionalParameter[1]);
         Serial.print("\n\n");
     }
 }
@@ -686,7 +773,7 @@ void readSettings(void)
 
 void writeSettings(void)
 {
-   writeGlobals();
+    writeGlobals();
 
-   writeBank(config.globalSettings.currentBank);
+    writeBank(config.globalSettings.currentBank);
 }

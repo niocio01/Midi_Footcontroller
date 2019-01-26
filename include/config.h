@@ -7,7 +7,24 @@
 
 typedef enum // all the possible Function Types get united
 {
-    Target_Track_Start_Stop = 1,
+    // Custom Functions
+    BLANK = 0,
+
+    Mic_Mute,
+    Target_Track_Inc,
+    Target_Track_Dec,
+
+    // use these functions to save on midi CC's
+    Select_Track_Play_Rec, 
+    Select_Track_Stop, // just stop
+    Select_Track_Start_Stop, // eighter stop or Play depending on current playing state
+    Select_Track_Clear,
+    Select_Track_Undo_redo,
+    Select_Track_Play_Level,
+
+
+    // V1 Functions
+    Target_Track_Play_Rec,
     Target_Track_Stop,
     Target_Track_Clear,
     Target_Track_Undo_redo,
@@ -16,8 +33,9 @@ typedef enum // all the possible Function Types get united
     Last_Undo_Redo,
     Tap_Tempo,
     Bank_Up_Down,
+    
 
-    // V1 Functions
+    // V2 Functions
     Track_Start_Stop,
     Track_Play_Rec,
     Track_Clear,
@@ -30,18 +48,11 @@ typedef enum // all the possible Function Types get united
     Master_Comp,
     Master_Reverb,
     Overdub_Mode,
-    Input_FX_On_Off, // more options form RC-505 V1 avaiable
+    Input_FX_On_Off,
     Input_FX_Inc_Dec,
     Track_FX_On_Off,
     Track_FX_Inc_Dec,
-    Target_Track_Inc_Dec,
-
-
-    // Custom Functions
-    Mic_Mute,
-    Target_Track_Inc,
-    Target_Track_Dec,
-    BLANK = 0,
+    // more avaiable
 
 } Function_Type_t ;
 
@@ -53,12 +64,22 @@ typedef struct // every Button is Configured with a Midi CC and addiditional Set
 
 } buttonFunction_t;
 
+typedef enum
+{
+    Inc,
+    Dec,
+    Play_Rec,
+    Stop,
+    Clear,
+    Undo_Redo,
+    Play_Level,
+} TargetTrackCC_Type_t;
 
 typedef struct
 {
-    RGB_Colors_t TrackColor[5];    
+    RGB_Colors_t TrackColor[5];
     buttonFunction_t function [16];
-
+    uint8_t TargetTrackCC[7];
 } bankSettings_t;
 
 

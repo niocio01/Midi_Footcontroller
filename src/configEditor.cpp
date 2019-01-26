@@ -35,3 +35,18 @@ Function_Type_t getButtonFunction(uint8_t button)
     return config.settings.function[button].function;
 }
 
+uint8_t getTargetTrackCC(TargetTrackCC_Type_t type)
+{
+    return config.settings.TargetTrackCC[type];
+}
+
+
+uint8_t getButtonAddPar1(uint8_t button)
+{
+    return config.settings.function[button].additionalParameter[0];
+}
+
+uint8_t getButtonAddPar2(uint8_t button)
+{
+    return config.settings.function[button].additionalParameter[1];
+}
