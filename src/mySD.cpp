@@ -114,7 +114,7 @@ void initSD(void)
 
     printSettings();
 
-   // printFile("/bank.txt");
+   printFile("/bank00.txt");
 
     
 

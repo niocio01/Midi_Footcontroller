@@ -12,7 +12,13 @@
 #include "configEditor.h"
 
 //U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/U8X8_PIN_NONE);
-U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/U8X8_PIN_NONE);
+// U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/U8X8_PIN_NONE);
+
+U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2A(U8G2_R0, /* reset=*/20); // Main Display with Reset Pin
+
+U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2B(U8G2_R0, /* reset=*/U8X8_PIN_NONE); // Analog Pedal Display
+
+U8G2_SSD1306_128X32_UNIVISION_F_HW_I2C u8g2C(U8G2_R0);  // Small Special Button Displays
 
 bool updateDisplayNeccessary = false;
 
@@ -23,7 +29,7 @@ void displaySetup(void)
 
     Wire.begin();
     Serial.print("i2c Clock speed: ");
-    Serial.print (Wire.getClock() );
+    Serial.print(Wire.getClock());
     Serial.println(" Hz");
 
     for (int i = 2; i <= 6; i++)
@@ -41,36 +47,75 @@ void displaySetup(void)
             Serial.println("Display not reachable!");
         }
 
-        u8g2.begin();
+        if (i == 2)
+        {
+            char startMessage1[] = "Midi";
+            char startMessage2[] = "Footcontroller";
+            char startMessage3[] = "by Nico Zuber";
 
-        u8g2.clearBuffer();                   // clear the internal memory
-        u8g2.setFont(u8g2_font_profont12_tf); // choose a suitable font
-        u8g2.drawStr(0, 8, "Hello World!");   // write something to the internal memory
-        u8g2.sendBuffer();                    // transfer internal memory to the display
-                                              //delay(1000);
+            u8g2A.begin();
+            u8g2A.clearBuffer();
+            u8g2A.setFont(u8g2_font_profont17_tf);
+            u8g2A.setFontPosTop();
+            u8g2A.drawStr(((128 - u8g2A.getStrWidth(startMessage1)) / 2), 4, startMessage1);
+            u8g2A.drawStr(((128 - u8g2A.getStrWidth(startMessage2)) / 2), u8g2A.getAscent() + abs(u8g2A.getDescent()) + 2 , startMessage2) ;
+
+            u8g2A.setFont(u8g2_font_profont12_tf);
+            u8g2A.drawStr(((128 - u8g2A.getStrWidth(startMessage3)) / 2), 40, startMessage3);
+
+            u8g2A.sendBuffer();
+        }
+        else if (i == 3)
+        {
+            u8g2B.begin();
+            u8g2B.clearBuffer();
+            u8g2B.setFont(u8g2_font_profont15_tf);
+            u8g2B.setFontPosCenter();
+            u8g2B.setCursor( (128 - u8g2B.getStrWidth("Analog Pedal")) / 2, 64/2);
+            u8g2B.print("Analog Pedal");
+            u8g2B.sendBuffer();
+        }
+
+        else
+        {
+            u8g2C.begin();
+            u8g2C.clearBuffer();
+            u8g2C.setFont(u8g2_font_profont15_tf);
+            u8g2C.setFontPosCenter();
+            u8g2C.setCursor( (128 - u8g2C.getStrWidth("Custom Button 1")) / 2, 32/2);
+            u8g2C.print("Custom Button ");
+            u8g2C.print( i - 3 );
+            u8g2C.sendBuffer();
+        }
+        
     }
+    delay(1000);
 }
 
 void drawBank()
 {
     uint8_t width = 0;
-    u8g2.setFont(u8g2_font_profont29_tf);
+
+    selectMuxPort(2);    // main display
+    u8g2A.clearBuffer(); // clear the internal memory
+
+    u8g2A.setFont(u8g2_font_profont29_tf);
     if (getBank() < 10)
     {
-        width = u8g2.getStrWidth("Bank 0");
-        u8g2.setCursor( (128 - width) / 2 , ( u8g2.getAscent() + 2  ) );
+        width = u8g2A.getStrWidth("Bank 0");
+        u8g2A.setCursor((128 - width) / 2, 2);
     }
     else
     {
-        width = u8g2.getStrWidth("Bank 00");
-        u8g2.setCursor( (128 - width) / 2 , ( u8g2.getAscent() + 2 ) );
+        width = u8g2A.getStrWidth("Bank 00");
+        u8g2A.setCursor((128 - width) / 2, 2);
     }
-    u8g2.print("Bank ");
-    u8g2.drawHLine(0,u8g2.getAscent() + 5 ,128);
-    u8g2.drawHLine(0,u8g2.getAscent() + 6 ,128);
-    u8g2.print(getBank());
-    u8g2.setCursor( 2 , 44);
-    u8g2.print(u8g2.getAscent());
+    u8g2A.print("Bank ");
+    u8g2A.print(getBank());
+    u8g2A.drawHLine(0, u8g2A.getAscent() + abs(u8g2A.getDescent()), 128);
+    u8g2A.drawHLine(0, u8g2A.getAscent() + abs(u8g2A.getDescent()) + 1, 128);    
+
+    u8g2A.sendBuffer();
 }
 
 void setUpdateFlag(void)
@@ -80,17 +125,10 @@ void setUpdateFlag(void)
 
 void updateDisplay(void)
 {
-    
-
     if (updateDisplayNeccessary == true)
     {
         updateDisplayNeccessary = false;
 
-        selectMuxPort(2); // main display
-        u8g2.clearBuffer(); // clear the internal memory
-
         drawBank();
-
-        u8g2.sendBuffer(); // transfer internal memory to the display
     }
 }

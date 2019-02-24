@@ -4,6 +4,11 @@
 #include <Arduino.h>
 #include "led.h"
 
+#define Track1 (1 << 0)
+#define Track2 (1 << 1)
+#define Track3 (1 << 2)
+#define Track4 (1 << 3)
+#define Track5 (1 << 4)
 
 typedef enum // all the possible Function Types get united
 {
@@ -80,6 +85,10 @@ typedef struct
     RGB_Colors_t TrackColor[5];
     buttonFunction_t function [16];
     uint8_t TargetTrackCC[7];
+    uint8_t StartOnStart[5];
+    uint8_t StopOnStart[5];
+    uint8_t StopOnStop[5];
+    uint8_t StartOnStop[5];
 } bankSettings_t;
 
 

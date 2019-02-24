@@ -6,7 +6,7 @@
 
 config_t config; // initiate the config structure
 const size_t globalCapacity = JSON_OBJECT_SIZE(2) + 40;
-const size_t bankCapacity = 16*JSON_ARRAY_SIZE(2) + 16*JSON_ARRAY_SIZE(3) + JSON_ARRAY_SIZE(5) + JSON_ARRAY_SIZE(7) + JSON_ARRAY_SIZE(16) + JSON_OBJECT_SIZE(1) + JSON_OBJECT_SIZE(3);
+const size_t bankCapacity = 16*JSON_ARRAY_SIZE(2) + 16*JSON_ARRAY_SIZE(3) + 5*JSON_ARRAY_SIZE(5) + JSON_ARRAY_SIZE(7) + JSON_ARRAY_SIZE(16) + JSON_OBJECT_SIZE(1) + JSON_OBJECT_SIZE(7);
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -92,6 +92,30 @@ void readBank(uint8_t bankNr)
             config.settings.TargetTrackCC[Undo_Redo] = 6;
             config.settings.TargetTrackCC[Play_Level] = 7;
 
+            config.settings.StartOnStart[0] = Track1;
+            config.settings.StartOnStart[1] = Track2;
+            config.settings.StartOnStart[2] = Track3 | Track2;
+            config.settings.StartOnStart[3] = Track4;
+            config.settings.StartOnStart[4] = Track5 | Track4;
+
+            config.settings.StopOnStart[0] = 0 ;
+            config.settings.StopOnStart[1] = Track4 | Track5 ;
+            config.settings.StopOnStart[2] = Track4 | Track5 ;
+            config.settings.StopOnStart[3] = Track2 | Track3 ;
+            config.settings.StopOnStart[4] = Track2 | Track3 ;
+
+            config.settings.StopOnStop[0] = Track1;
+            config.settings.StopOnStop[1] = Track2 | Track3;
+            config.settings.StopOnStop[2] = Track3;
+            config.settings.StopOnStop[3] = Track4 | Track5;
+            config.settings.StopOnStop[4] = Track5;
+
+            config.settings.StartOnStop[0] = 0;
+            config.settings.StartOnStop[1] = 0;
+            config.settings.StartOnStop[2] = 0;
+            config.settings.StartOnStop[3] = 0;
+            config.settings.StartOnStop[4] = 0;
+
             config.settings.TrackColor[0] = RED;
             config.settings.TrackColor[1] = BLUE;
             config.settings.TrackColor[2] = GREEN;
@@ -99,52 +123,52 @@ void readBank(uint8_t bankNr)
             config.settings.TrackColor[4] = VIOLET;
 
             config.settings.function[0].midi_CC = 0;
-            config.settings.function[0].function = Select_Track_Play_Rec;
+            config.settings.function[0].function = Select_Track_Start_Stop;
             config.settings.function[0].additionalParameter[0] = 1; // track 1
             config.settings.function[0].additionalParameter[1] = 0;
 
             config.settings.function[1].midi_CC = 0;
-            config.settings.function[1].function = Select_Track_Start_Stop;
+            config.settings.function[1].function = Select_Track_Play_Rec;
             config.settings.function[1].additionalParameter[0] = 1; // track 1
             config.settings.function[1].additionalParameter[1] = 0;
 
             config.settings.function[2].midi_CC = 0;
-            config.settings.function[2].function = Select_Track_Play_Rec;
+            config.settings.function[2].function = Select_Track_Start_Stop;
             config.settings.function[2].additionalParameter[0] = 2; // track 2
             config.settings.function[2].additionalParameter[1] = 0;
 
             config.settings.function[3].midi_CC = 0;
-            config.settings.function[3].function = Select_Track_Start_Stop;
+            config.settings.function[3].function = Select_Track_Play_Rec;
             config.settings.function[3].additionalParameter[0] = 2; // track 2
             config.settings.function[3].additionalParameter[1] = 0;
 
             config.settings.function[4].midi_CC = 0;
-            config.settings.function[4].function = Select_Track_Play_Rec;
+            config.settings.function[4].function = Select_Track_Start_Stop;
             config.settings.function[4].additionalParameter[0] = 3; // track 3
             config.settings.function[4].additionalParameter[1] = 0;
 
             config.settings.function[5].midi_CC = 0;
-            config.settings.function[5].function = Select_Track_Start_Stop;
+            config.settings.function[5].function = Select_Track_Play_Rec;
             config.settings.function[5].additionalParameter[0] = 3; // track 3
             config.settings.function[5].additionalParameter[1] = 0;
 
             config.settings.function[6].midi_CC = 0;
-            config.settings.function[6].function = Select_Track_Play_Rec;
+            config.settings.function[6].function = Select_Track_Start_Stop;
             config.settings.function[6].additionalParameter[0] = 4; // track 4
             config.settings.function[6].additionalParameter[1] = 0;
 
             config.settings.function[7].midi_CC = 0;
-            config.settings.function[7].function = Select_Track_Start_Stop;
+            config.settings.function[7].function = Select_Track_Play_Rec;
             config.settings.function[7].additionalParameter[0] = 4; // track 4
             config.settings.function[7].additionalParameter[1] = 0;
 
             config.settings.function[8].midi_CC = 0;
-            config.settings.function[8].function = Select_Track_Play_Rec;
+            config.settings.function[8].function = Select_Track_Start_Stop;
             config.settings.function[8].additionalParameter[0] = 5; // track 5
             config.settings.function[8].additionalParameter[1] = 0;
 
             config.settings.function[9].midi_CC = 0;
-            config.settings.function[9].function = Select_Track_Start_Stop;
+            config.settings.function[9].function = Select_Track_Play_Rec;
             config.settings.function[9].additionalParameter[0] = 5; // track 5
             config.settings.function[9].additionalParameter[1] = 0;
 
@@ -191,6 +215,19 @@ void readBank(uint8_t bankNr)
         for (int i = 0 ; i < 7; i++)
         {
             config.settings.TargetTrackCC[i] = bankSettings_TargetTrackCC[i];
+        }
+
+        JsonArray& bankSettings_StartOnStart = bankSettings["StartOnStart"];
+        JsonArray& bankSettings_StopOnStart = bankSettings["StopOnStart"];
+        JsonArray& bankSettings_StopOnStop = bankSettings["StopOnStop"];
+        JsonArray& bankSettings_StartOnStop = bankSettings["StartOnStop"];
+
+        for (int i = 0 ; i < 5; i++)
+        {
+            config.settings.StartOnStart[i] = bankSettings_StartOnStart[i];
+            config.settings.StopOnStart[i] = bankSettings_StopOnStart[i];
+            config.settings.StopOnStop[i] = bankSettings_StopOnStop[i];
+            config.settings.StartOnStop[i] = bankSettings_StartOnStop[i];
         }
 
         JsonArray &bankSettings_TrackColors = root["bankSettings"]["TrackColors"];
@@ -470,6 +507,18 @@ void writeBank(uint8_t bankNr)
         bankSettings_TargetTrackCC.add( config.settings.TargetTrackCC[i] );
     }
 
+    JsonArray& bankSettings_StartOnStart = bankSettings.createNestedArray("StartOnStart");
+    JsonArray& bankSettings_StopOnStart = bankSettings.createNestedArray("StopOnStart");
+    JsonArray& bankSettings_StopOnStop = bankSettings.createNestedArray("StopOnStop");
+    JsonArray& bankSettings_StartOnStop = bankSettings.createNestedArray("StartOnStop");
+    for (int i = 0 ; i < 5 ; i++)
+    {
+        bankSettings_StartOnStart.add(config.settings.StartOnStart[i]);
+        bankSettings_StopOnStart.add(config.settings.StopOnStart[i]);
+        bankSettings_StopOnStop.add(config.settings.StopOnStop[i]);
+        bankSettings_StartOnStop.add(config.settings.StartOnStop[i]);
+    }
+
     JsonArray &bankSettings_TrackColors = bankSettings.createNestedArray("TrackColors");
     for (int i = 0; i < 5; i++)
     {
@@ -543,6 +592,227 @@ void printSettings(void)
     Serial.println(config.settings.TargetTrackCC[Undo_Redo]);
     Serial.print("Target Play Level:       ");
     Serial.println(config.settings.TargetTrackCC[Play_Level]);
+
+    Serial.println("\nStart On Start");
+    for (int i = 0; i < 5; i++)
+    {
+        Serial.print("Track");
+        Serial.print(i+1);
+        Serial.print(":                 ");
+
+        if (config.settings.StartOnStart[i] & Track1)
+        {
+            Serial.print("1  ");
+        }
+        else
+        {
+            Serial.print("   ");
+        }
+        
+        if (config.settings.StartOnStart[i] & Track2)
+        {
+            Serial.print("2  ");
+        }
+        else
+        {
+            Serial.print("   ");
+        }
+
+        if (config.settings.StartOnStart[i] & Track3)
+        {
+            Serial.print("3  ");
+        }
+        else
+        {
+            Serial.print("   ");
+        }
+
+        if (config.settings.StartOnStart[i] & Track4)
+        {
+            Serial.print("4  ");
+        }
+        else
+        {
+            Serial.print("   ");
+        }
+
+        if (config.settings.StartOnStart[i] & Track5)
+        {
+            Serial.print("5  ");
+        }
+        else
+        {
+            Serial.print("   ");
+        }
+
+        Serial.println("");
+    }
+
+    Serial.println("\nStop On Start");
+    for (int i = 0; i < 5; i++)
+    {
+        Serial.print("Track");
+        Serial.print(i+1);
+        Serial.print(":                 ");
+
+        if (config.settings.StopOnStart[i] & Track1)
+        {
+            Serial.print("1  ");
+        }
+        else
+        {
+            Serial.print("   ");
+        }
+        
+        if (config.settings.StopOnStart[i] & Track2)
+        {
+            Serial.print("2  ");
+        }
+        else
+        {
+            Serial.print("   ");
+        }
+
+        if (config.settings.StopOnStart[i] & Track3)
+        {
+            Serial.print("3  ");
+        }
+        else
+        {
+            Serial.print("   ");
+        }
+
+        if (config.settings.StopOnStart[i] & Track4)
+        {
+            Serial.print("4  ");
+        }
+        else
+        {
+            Serial.print("   ");
+        }
+
+        if (config.settings.StopOnStart[i] & Track5)
+        {
+            Serial.print("5  ");
+        }
+        else
+        {
+            Serial.print("   ");
+        }
+
+        Serial.println("");
+    }
+
+    Serial.println("\nStop On Stop");
+    for (int i = 0; i < 5; i++)
+    {
+        Serial.print("Track");
+        Serial.print(i+1);
+        Serial.print(":                 ");
+
+        if (config.settings.StopOnStop[i] & Track1)
+        {
+            Serial.print("1  ");
+        }
+        else
+        {
+            Serial.print("   ");
+        }
+        
+        if (config.settings.StopOnStop[i] & Track2)
+        {
+            Serial.print("2  ");
+        }
+        else
+        {
+            Serial.print("   ");
+        }
+
+        if (config.settings.StopOnStop[i] & Track3)
+        {
+            Serial.print("3  ");
+        }
+        else
+        {
+            Serial.print("   ");
+        }
+
+        if (config.settings.StopOnStop[i] & Track4)
+        {
+            Serial.print("4  ");
+        }
+        else
+        {
+            Serial.print("   ");
+        }
+
+        if (config.settings.StopOnStop[i] & Track5)
+        {
+            Serial.print("5  ");
+        }
+        else
+        {
+            Serial.print("   ");
+        }
+
+        Serial.println("");
+    }
+
+    Serial.println("\nStart On Stop");
+    for (int i = 0; i < 5; i++)
+    {
+        Serial.print("Track");
+        Serial.print(i+1);
+        Serial.print(":                 ");
+
+        if (config.settings.StartOnStop[i] & Track1)
+        {
+            Serial.print("1  ");
+        }
+        else
+        {
+            Serial.print("   ");
+        }
+        
+        if (config.settings.StartOnStop[i] & Track2)
+        {
+            Serial.print("2  ");
+        }
+        else
+        {
+            Serial.print("   ");
+        }
+
+        if (config.settings.StartOnStop[i] & Track3)
+        {
+            Serial.print("3  ");
+        }
+        else
+        {
+            Serial.print("   ");
+        }
+
+        if (config.settings.StartOnStop[i] & Track4)
+        {
+            Serial.print("4  ");
+        }
+        else
+        {
+            Serial.print("   ");
+        }
+
+        if (config.settings.StartOnStop[i] & Track5)
+        {
+            Serial.print("5  ");
+        }
+        else
+        {
+            Serial.print("   ");
+        }
+
+        Serial.println("");
+    }
+    
 
     Serial.println("\nTrack Colors");
     for (int i = 0; i < 5; i++)

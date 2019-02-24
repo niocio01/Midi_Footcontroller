@@ -30,6 +30,27 @@ uint8_t getButtonMidiCC(uint8_t button)
     return config.settings.function[button].midi_CC;
 }
 
+
+
+uint8_t getStartOnStart(uint8_t track)
+{
+    return config.settings.StartOnStart[track];
+}
+uint8_t getStopOnStart(uint8_t track)
+{
+    return config.settings.StopOnStart[track];
+}
+uint8_t getStopOnStop(uint8_t track)
+{
+    return config.settings.StopOnStop[track];
+}
+uint8_t getStartOnStop(uint8_t track)
+{
+    return config.settings.StartOnStop[track];
+}
+
+
+
 Function_Type_t getButtonFunction(uint8_t button)
 {
     return config.settings.function[button].function;

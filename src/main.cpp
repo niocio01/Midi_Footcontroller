@@ -25,7 +25,7 @@ void setup()
   //  delay(2000);
   //  Serial.println("Serial Connection Established.");
 
-    initSD();
+   // initSD();
 
     displaySetup();
 

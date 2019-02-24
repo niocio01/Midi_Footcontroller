@@ -15,6 +15,11 @@ Function_Type_t getButtonFunction(uint8_t button);
 
 uint8_t getTargetTrackCC(TargetTrackCC_Type_t type);
 
+uint8_t getStartOnStart(uint8_t track);
+uint8_t getStopOnStart(uint8_t track);
+uint8_t getStopOnStop(uint8_t track);
+uint8_t getStartOnStop(uint8_t track);
+
 uint8_t getButtonAddPar1(uint8_t button);
 uint8_t getButtonAddPar2(uint8_t button);
 
