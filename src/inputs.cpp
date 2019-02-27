@@ -49,6 +49,8 @@ void initInputs(void)
     CSTM_SW5_CONFIG = DIGITALINPUT;
 }
 
+
+
 static uint32_t inputBuffer = 0;
 static uint32_t lastInputBuffer = 0;
 

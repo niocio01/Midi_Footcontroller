@@ -50,39 +50,39 @@ void goToTargetTrack(uint8_t targetTrack)
         if (difference == -4 or difference == 1)
         {
             sendMidiCC(getTargetTrackCC(Inc), 127);
-            delay(15);
+            delay(10);
             sendMidiCC(getTargetTrackCC(Inc), 0);
         }
 
         else if (difference == -3 or difference == 2)
         {
             sendMidiCC(getTargetTrackCC(Inc), 127);
-            delay(15);
+            delay(10);
             sendMidiCC(getTargetTrackCC(Inc), 0);
-            delay(15);
+            delay(10);
             sendMidiCC(getTargetTrackCC(Inc), 127);
-            delay(15);
+            delay(10);
             sendMidiCC(getTargetTrackCC(Inc), 0);
         }
 
         else if (difference == -2 or difference == 3)
         {
             sendMidiCC(getTargetTrackCC(Dec), 127);
-            delay(15);
+            delay(10);
             sendMidiCC(getTargetTrackCC(Dec), 0);
-            delay(15);
+            delay(10);
             sendMidiCC(getTargetTrackCC(Dec), 127);
-            delay(15);
+            delay(10);
             sendMidiCC(getTargetTrackCC(Dec), 0);
         }
 
         else if (difference == -1 or difference == 4)
         {
             sendMidiCC(getTargetTrackCC(Dec), 127);
-            delay(15);
+            delay(10);
             sendMidiCC(getTargetTrackCC(Dec), 0);
         }
-        delay(15);
+        delay(10);
     }
 }
 
@@ -90,8 +90,9 @@ void startTrack(uint8_t track)
 {
     goToTargetTrack(track);
     sendMidiCC(getTargetTrackCC(Play_Rec), 127);
-    delay(15);
+    delay(10);
     sendMidiCC(getTargetTrackCC(Play_Rec), 0);
+    delay(10);
     trackPlaying[track - 1] = true;
     TrackHasRecording[track - 1] = true;
     Serial.print("Track Nr ");
@@ -103,8 +104,9 @@ void stopTrack(uint8_t track)
 {
     goToTargetTrack(track);
     sendMidiCC(getTargetTrackCC(Stop), 127);
-    delay(15);
+    delay(10);
     sendMidiCC(getTargetTrackCC(Stop), 0);
+    delay(10);
     trackPlaying[track - 1] = false;
     Serial.print("Track Nr ");
     Serial.print(track);
@@ -121,7 +123,6 @@ void startOnStart(uint8_t track, bool startWithOverdub)
         if (((startWithOverdub == true) & (TrackHasRecording[track - 1] == true))) // press it twice to go into overdub if its allready recorded
         {
             startTrack(track); // can also be used to start overdub.
-            delay(15);
         }
     }
 
@@ -132,7 +133,6 @@ void startOnStart(uint8_t track, bool startWithOverdub)
             if ((TracksToStart & ((int)pow(2, i))) && (i != track - 1)) // is the this Track supposed to be started and isnt the pressed one
             {
                 startTrack(i + 1);
-                delay(15);
             }
         }
     }
@@ -145,7 +145,6 @@ void stopOnStart(uint8_t track)
     if (TracksToStop & ((int)pow(2, track - 1))) // is the pressed Track supposed to be started
     {
         stopTrack(track);
-        delay(15);
     }
 
     for (int i = 0; i < 5; i++)
@@ -155,7 +154,6 @@ void stopOnStart(uint8_t track)
             if ((TracksToStop & ((int)pow(2, i))) && (i != track - 1)) // is the this Track supposed to be started and isnt the pressed one
             {
                 stopTrack(i + 1);
-                delay(15);
             }
         }
     }
@@ -175,7 +173,6 @@ void stopOnStop(uint8_t track)
         if ((TracksToStop & ((int)pow(2, i))) && (trackPlaying[i] == true) && (i != track - 1))
         {
             stopTrack(i + 1);
-            delay(15);
         }
     }
 }
@@ -201,7 +198,6 @@ void footButtonPressed(uint8_t button)
             if (trackPlaying[track - 1] == false) // start track
             {
                 stopOnStart(track); // stop first, to allow start from the begining
-                delay(15);
                 startOnStart(track, false); // start track
             }
             else // stop
@@ -220,7 +216,6 @@ void footButtonPressed(uint8_t button)
             else // Start twise to enable Overdub
             {
                 startTrack(track);
-                delay(15);
                 startTrack(track); // also does Overdub on/off
             }
             break;
@@ -236,21 +231,21 @@ void footButtonPressed(uint8_t button)
         {
         case Target_Track_Inc:
             sendMidiCC(getButtonMidiCC(button), 127);
-            delay(15);
+            delay(10);
             sendMidiCC(getButtonMidiCC(button), 0);
             Serial.println("Target Track Increased\n");
             break;
 
         case Target_Track_Dec:
             sendMidiCC(getButtonMidiCC(button), 127);
-            delay(15);
+            delay(10);
             sendMidiCC(getButtonMidiCC(button), 0);
             Serial.println("Target Track Decreased\n");
             break;
 
         case Target_Track_Play_Rec:
             sendMidiCC(getButtonMidiCC(button), 127);
-            delay(15);
+            delay(10);
             sendMidiCC(getButtonMidiCC(button), 0);
             Serial.println("Track Started/Stopped\n");
             break;

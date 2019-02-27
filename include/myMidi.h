@@ -3,9 +3,10 @@
 
     void midiSetup(void);
 
-    void midiInputTest (void);
+    void midiUpdate(void);
 
-    void midiOutputTest(void);
+    void handleStart(void);
+    void handleClock(void);
 
     void sendMidiCC(uint8_t cc, uint8_t val);
 
