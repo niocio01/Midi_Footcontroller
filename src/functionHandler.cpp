@@ -49,50 +49,42 @@ void goToTargetTrack(uint8_t targetTrack)
     {
         if (difference == -4 or difference == 1)
         {
-            sendMidiCC(getTargetTrackCC(Inc), 127);
-            delay(10);
-            sendMidiCC(getTargetTrackCC(Inc), 0);
+            addMidiCommandToQueue(getTargetTrackCC(Inc), 127);
+            addMidiCommandToQueue(getTargetTrackCC(Inc), 0);
         }
 
         else if (difference == -3 or difference == 2)
         {
-            sendMidiCC(getTargetTrackCC(Inc), 127);
-            delay(10);
-            sendMidiCC(getTargetTrackCC(Inc), 0);
-            delay(10);
-            sendMidiCC(getTargetTrackCC(Inc), 127);
-            delay(10);
-            sendMidiCC(getTargetTrackCC(Inc), 0);
+            addMidiCommandToQueue(getTargetTrackCC(Inc), 127);
+            addMidiCommandToQueue(getTargetTrackCC(Inc), 0);
+
+            addMidiCommandToQueue(getTargetTrackCC(Inc), 127);
+            addMidiCommandToQueue(getTargetTrackCC(Inc), 0);
         }
 
         else if (difference == -2 or difference == 3)
         {
-            sendMidiCC(getTargetTrackCC(Dec), 127);
-            delay(10);
-            sendMidiCC(getTargetTrackCC(Dec), 0);
-            delay(10);
-            sendMidiCC(getTargetTrackCC(Dec), 127);
-            delay(10);
-            sendMidiCC(getTargetTrackCC(Dec), 0);
+            addMidiCommandToQueue(getTargetTrackCC(Dec), 127);
+            addMidiCommandToQueue(getTargetTrackCC(Dec), 0);
+
+            addMidiCommandToQueue(getTargetTrackCC(Dec), 127);
+            addMidiCommandToQueue(getTargetTrackCC(Dec), 0);
         }
 
         else if (difference == -1 or difference == 4)
         {
-            sendMidiCC(getTargetTrackCC(Dec), 127);
-            delay(10);
-            sendMidiCC(getTargetTrackCC(Dec), 0);
+            addMidiCommandToQueue(getTargetTrackCC(Dec), 127);
+            addMidiCommandToQueue(getTargetTrackCC(Dec), 0);
         }
-        delay(10);
     }
 }
 
 void startTrack(uint8_t track)
 {
     goToTargetTrack(track);
-    sendMidiCC(getTargetTrackCC(Play_Rec), 127);
-    delay(10);
-    sendMidiCC(getTargetTrackCC(Play_Rec), 0);
-    delay(10);
+    addMidiCommandToQueue(getTargetTrackCC(Play_Rec), 127);
+    addMidiCommandToQueue(getTargetTrackCC(Play_Rec), 0);
+
     trackPlaying[track - 1] = true;
     TrackHasRecording[track - 1] = true;
     Serial.print("Track Nr ");
@@ -103,10 +95,9 @@ void startTrack(uint8_t track)
 void stopTrack(uint8_t track)
 {
     goToTargetTrack(track);
-    sendMidiCC(getTargetTrackCC(Stop), 127);
-    delay(10);
-    sendMidiCC(getTargetTrackCC(Stop), 0);
-    delay(10);
+    addMidiCommandToQueue(getTargetTrackCC(Stop), 127);
+    addMidiCommandToQueue(getTargetTrackCC(Stop), 0);
+
     trackPlaying[track - 1] = false;
     Serial.print("Track Nr ");
     Serial.print(track);
@@ -197,7 +188,7 @@ void footButtonPressed(uint8_t button)
         case Select_Track_Start_Stop:
             if (trackPlaying[track - 1] == false) // start track
             {
-                stopOnStart(track); // stop first, to allow start from the begining
+                stopOnStart(track);         // stop first, to allow start from the begining
                 startOnStart(track, false); // start track
             }
             else // stop
