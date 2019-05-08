@@ -1,88 +1,44 @@
-#include <Adafruit_NeoPixel.h>
+#include <WS2812Serial.h>
+#include "led.h"
 
-#define PIN 20
-#define NUMPIXELS 5
+const int numled =5;
+const int pin = 8;
 
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRBW + NEO_KHZ800);
+// Usable pins:
+//   Teensy LC:   1, 4, 5, 24
+//   Teensy 3.2:  1, 5, 8, 10, 31   (overclock to 120 MHz for pin 8)
+//   Teensy 3.5:  1, 5, 8, 10, 26, 32, 33, 48
+//   Teensy 3.6:  1, 5, 8, 10, 26, 32, 33
+
+byte drawingMemory[numled*3];         //  3 bytes per LED
+DMAMEM byte displayMemory[numled*12]; // 12 bytes per LED
+
+WS2812Serial leds(numled, displayMemory, drawingMemory, pin, WS2812_GRB);
 
 void initLed(void)
 {
 
-    pixels.begin(); // This initializes the NeoPixel library.
+    leds.begin();
 }
 
 void ledTest(void)
 {
+ // change all the LEDs in 1.5 seconds
+  int microsec = 1500000 / leds.numPixels();
 
-    for (int i = 0; i < NUMPIXELS; i++)
-    {
-        pixels.setPixelColor(i, pixels.Color(150, 0, 0, 0)); // Moderately bright green color.
+  colorWipe(this_RED, microsec);
+  colorWipe(this_GREEN, microsec);
+  colorWipe(this_BLUE, microsec);
+  colorWipe(this_YELLOW, microsec);
+  colorWipe(this_PINK, microsec);
+  colorWipe(this_ORANGE, microsec);
+  colorWipe(this_WHITE, microsec);
+}
 
-        pixels.show(); // This sends the updated pixel color to the hardware.
-
-        delay(500); // Delay for a period of time (in milliseconds).
-    }
-
-    for (int i = NUMPIXELS; i >= 0 ; i--)
-    {
-        pixels.setPixelColor(i, pixels.Color(0, 0, 0, 0)); // Moderately bright green color.
-
-        pixels.show(); // This sends the updated pixel color to the hardware.
-
-        delay(500); // Delay for a period of time (in milliseconds).
-    }
-
-    for (int i = 0; i < NUMPIXELS; i++)
-    {
-        pixels.setPixelColor(i, pixels.Color(0, 150, 0, 0)); // Moderately bright green color.
-
-        pixels.show(); // This sends the updated pixel color to the hardware.
-
-        delay(500); // Delay for a period of time (in milliseconds).
-    }
-
-    for (int i = NUMPIXELS; i >= 0 ; i--)
-    {
-        pixels.setPixelColor(i, pixels.Color(0, 0, 0, 0)); // Moderately bright green color.
-
-        pixels.show(); // This sends the updated pixel color to the hardware.
-
-        delay(500); // Delay for a period of time (in milliseconds).
-    }
-
-    for (int i = 0; i < NUMPIXELS; i++)
-    {
-        pixels.setPixelColor(i, pixels.Color(0, 0, 150, 0)); // Moderately bright green color.
-
-        pixels.show(); // This sends the updated pixel color to the hardware.
-
-        delay(500); // Delay for a period of time (in milliseconds).
-    }
-
-    for (int i = NUMPIXELS; i >= 0 ; i--)
-    {
-        pixels.setPixelColor(i, pixels.Color(0, 0, 0, 0)); // Moderately bright green color.
-
-        pixels.show(); // This sends the updated pixel color to the hardware.
-
-        delay(500); // Delay for a period of time (in milliseconds).
-    }
-
-    for (int i = 0; i < NUMPIXELS; i++)
-    {
-        pixels.setPixelColor(i, pixels.Color(0, 0, 0, 150)); // Moderately bright green color.
-
-        pixels.show(); // This sends the updated pixel color to the hardware.
-
-        delay(500); // Delay for a period of time (in milliseconds).
-    }
-
-    for (int i = NUMPIXELS; i >= 0 ; i--)
-    {
-        pixels.setPixelColor(i, pixels.Color(0, 0, 0, 0)); // Moderately bright green color.
-
-        pixels.show(); // This sends the updated pixel color to the hardware.
-
-        delay(500); // Delay for a period of time (in milliseconds).
-    }
+void colorWipe(int color, int wait) {
+  for (int i=0; i < leds.numPixels(); i++) {
+    leds.setPixel(i, color);
+    leds.show();
+    delayMicroseconds(wait);
+  }
 }

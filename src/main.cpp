@@ -17,13 +17,6 @@ uint32_t lastButtons = 0;
 
 void setup()
 {
-    // pinMode(LED_BUILTIN, OUTPUT);
-
-    //pinMode(4, INPUT);
-
-  //  Serial.begin(115200);
-  //  delay(2000);
-  //  Serial.println("Serial Connection Established.");
 
     initSD();
 
@@ -33,16 +26,10 @@ void setup()
 
     midiSetup();
 
-    //initLed();
-
-    
-
-    // sdWriteTest();
+    initLed();
 
     setUpdateFlag();
 }
-
-
 
 void loop()
 {
@@ -52,27 +39,5 @@ void loop()
 
     midiUpdate();
 
-    
-    //delay(2000);
-
-    // Serial.print(FTM3_CNT);
-    // Serial.print("     ");
-    // Serial.println(FTM3_C0V);
-    //Serial.println(getInputs(),BIN);
-    //Serial.println(digitalRead(4),BIN);
-
-
-
-  //  if ( lastButtons != getInputs())
-  //  {
-  //      printInputs(getInputs());
-  //  }
-  //  lastButtons = getInputs();
-    //delay(2000);
-
-    //midiInputTest ();
-
-    //midiOutputTest();
-
-    //ledTest();
+    ledTest();
 }
