@@ -26,7 +26,7 @@ void setup()
 
     midiSetup();
 
-    initLed();
+    Led::init();
 
     setUpdateFlag();
 }
@@ -39,5 +39,5 @@ void loop()
 
     midiUpdate();
 
-    ledTest();
+    Led::Test();
 }

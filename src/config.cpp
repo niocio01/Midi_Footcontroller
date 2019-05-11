@@ -116,11 +116,11 @@ void readBank(uint8_t bankNr)
             config.settings.StartOnStop[3] = 0;
             config.settings.StartOnStop[4] = 0;
 
-            config.settings.TrackColor[0] = RED;
-            config.settings.TrackColor[1] = BLUE;
-            config.settings.TrackColor[2] = GREEN;
-            config.settings.TrackColor[3] = ORANGE;
-            config.settings.TrackColor[4] = VIOLET;
+            config.settings.TrackColor[0] = Led::RED;
+            config.settings.TrackColor[1] = Led::BLUE;
+            config.settings.TrackColor[2] = Led::GREEN;
+            config.settings.TrackColor[3] = Led::ORANGE;
+            config.settings.TrackColor[4] = Led::VIOLET;
 
             config.settings.function[0].midi_CC = 0;
             config.settings.function[0].function = Select_Track_Start_Stop;
@@ -238,32 +238,32 @@ void readBank(uint8_t bankNr)
             switch (bankSettings_TrackColors.get<int>(i))
             {
             case 0:
-                config.settings.TrackColor[i] = RED;
+                config.settings.TrackColor[i] = Led::RED;
                 break;
             case 1:
-                config.settings.TrackColor[i] = GREEN;
+                config.settings.TrackColor[i] = Led::GREEN;
                 break;
             case 2:
-                config.settings.TrackColor[i] = BLUE;
+                config.settings.TrackColor[i] = Led::BLUE;
                 break;
             case 3:
-                config.settings.TrackColor[i] = WHITE;
+                config.settings.TrackColor[i] = Led::WHITE;
                 break;
             case 4:
-                config.settings.TrackColor[i] = BLACK;
+                config.settings.TrackColor[i] = Led::BLACK;
                 break;
             case 5:
-                config.settings.TrackColor[i] = YELLOW;
+                config.settings.TrackColor[i] = Led::YELLOW;
                 break;
             case 6:
-                config.settings.TrackColor[i] = ORANGE;
+                config.settings.TrackColor[i] = Led::ORANGE;
                 break;
             case 7:
-                config.settings.TrackColor[i] = VIOLET;
+                config.settings.TrackColor[i] = Led::VIOLET;
                 break;
 
             default:
-                config.settings.TrackColor[i] = WHITE;
+                config.settings.TrackColor[i] = Led::WHITE;
                 break;
             }
         }
@@ -822,35 +822,35 @@ void printSettings(void)
         Serial.print(":              ");
         switch (config.settings.TrackColor[i])
         {
-        case RED:
+        case Led::RED:
             Serial.println("Red");
             break;
 
-        case GREEN:
+        case Led::GREEN:
             Serial.println("Green");
             break;
 
-        case BLUE:
+        case Led::BLUE:
             Serial.println("Blue");
             break;
 
-        case WHITE:
+        case Led::WHITE:
             Serial.println("White");
             break;
 
-        case BLACK:
+        case Led::BLACK:
             Serial.println("Black");
             break;
 
-        case YELLOW:
+        case Led::YELLOW:
             Serial.println("Yellow");
             break;
 
-        case ORANGE:
+        case Led::ORANGE:
             Serial.println("Orange");
             break;
 
-        case VIOLET:
+        case Led::VIOLET:
             Serial.println("Violet");
             break;
 

@@ -82,7 +82,7 @@ typedef enum
 
 typedef struct
 {
-    RGB_Colors_t TrackColor[5];
+    Led::Colors_t TrackColor[5];
     buttonFunction_t function [16];
     uint8_t TargetTrackCC[7];
     uint8_t StartOnStart[5];
