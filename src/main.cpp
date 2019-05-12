@@ -29,6 +29,23 @@ void setup()
     Led::init();
 
     setUpdateFlag();
+
+    Led::setMasterBrightness(255);
+
+    Led::Segment firstFive(0, 5, 10);
+
+    firstFive.setLed(0, 255, 0, 0, 0);
+    firstFive.setLed(1, 0, 255, 0, 0);
+    firstFive.setLed(2, 0, 0, 255, 0);
+    firstFive.setLed(3, 0, 0, 100, 0);
+
+   // firstFive.setAll(0, 255, 0, 0);
+
+    Led::Segment secondFive(5, 10, 50);
+
+    secondFive.setAll(RGBW_ORANGE);
+
+    Led::update();
 }
 
 void loop()
@@ -39,5 +56,5 @@ void loop()
 
     midiUpdate();
 
-    Led::Test();
+    // Led::Test();
 }

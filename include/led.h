@@ -1,11 +1,13 @@
 #ifndef LED_H
 #define LED_H
 
+#include <Arduino.h>
+
 // create namespace to avoid name reusing
 namespace Led 
 {
 
-const int numLed = 5;
+const int numLed = 10;
 const int pin = 8;
 
 // create color type, used in Config reading / setting
@@ -23,13 +25,13 @@ typedef enum Colors
 
 
 // define colors for easy reference
-#define RGBW_CODE_RED 0x00FF0000
-#define RGBW_CODE_GREEN 0x0000FF00
-#define RGBW_CODE_BLUE 0x000000FF
-#define RGBW_CODE_YELLOW 0x00FFFF00
-#define RGBW_CODE_PINK 0x00FF1088
-#define RGBW_CODE_ORANGE 0x00E05800
-#define RGBW_CODE_WHITE 0xFF000000
+#define RGBW_RED 0x00FF0000
+#define RGBW_GREEN 0x0000FF00
+#define RGBW_BLUE 0x000000FF
+#define RGBW_YELLOW 0x00FFFF00
+#define RGBW_PINK 0x00FF1088
+#define RGBW_ORANGE 0x00E05800
+#define RGBW_WHITE 0xFF000000
 
 // non class functions
 
@@ -41,6 +43,9 @@ void update(void);
 
 // set Brightness multiplier for all Leds
 void setMasterBrightness(uint8_t newBrightness);
+
+// get the number of Leds on the strip
+uint8_t getNum(void);
 
 // test Leds
 void Test(void);
@@ -59,36 +64,50 @@ public:
     Segment();
 
     // Overload Constructor
-    Segment(uint8_t newStart, u_int8_t newEnd);
+    Segment(uint32_t newStart, uint32_t newEnd);
 
     // Overload Constructor
-    Segment(uint8_t newStart, u_int8_t newEnd, uint8_t newBrightness);
+    Segment(uint32_t newStart, uint32_t newEnd, uint8_t newBrightness);
 
 // set functions
 
     // set start id for Led Segment
-    void setStart(uint8_t newStart);
+    void setStart(uint32_t newStart);
 
     // set end id for Led Segment
-    void setEnd(uint8_t newEnd);
+    void setEnd(uint32_t newEnd);
 
     // set Brightness for Led Segment
     void setBrightness(uint8_t newBrightness);
 
+    // set color of all segment Led's
+    void setAll(int color);
+
+    // set color of all segment Led's
+    void setAll(uint8_t red, uint8_t green, uint8_t blue, uint8_t white);
+
+    // set inidvidual Led of segment
+    void setLed(uint32_t id, int color);
+
+    // set inidvidual Led of segment
+    void setLed(uint32_t id, uint8_t red, uint8_t green, uint8_t blue, uint8_t white);
+
+
+
 // get functions
 
     // get start id for Led Segment
-    uint8_t getStart() const;
+    uint32_t getStart() const;
 
     // get end id for Led Segment
-    uint8_t getEnd() const;
+    uint32_t getEnd() const;
 
     // get Brightness of Led Segment
     uint8_t getBrightness() const;
 
 private:
-    uint8_t start;      // start id of Led Segment
-    uint8_t end;        // end id of Led Segment
+    uint32_t start;      // start id of Led Segment
+    uint32_t end;        // end id of Led Segment
     uint8_t brightness; // brightness of Led Segment
 };
 } // namespace Led
