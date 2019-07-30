@@ -11,6 +11,7 @@
 #include "led.h"
 #include "mySD.h"
 #include "i2c_mux.h"
+#include "lightController.h"
 
 int count = 0;
 uint32_t lastButtons = 0;
@@ -20,41 +21,61 @@ void setup()
 
     initSD();
 
-    displaySetup();
+    // displaySetup();
 
-    initInputs();
+    // inputs::initInputs();
 
-    midiSetup();
+    // midiSetup();
 
     Led::init();
 
-    setUpdateFlag();
+    // setUpdateFlag();
 
-    Led::setMasterBrightness(255);
+    // Led::setMasterBrightness(100);
 
-    Led::Segment firstFive(0, 5, 10);
+     ButtonLights::init();
 
-    firstFive.setLed(0, 255, 0, 0, 0);
-    firstFive.setLed(1, 0, 255, 0, 0);
-    firstFive.setLed(2, 0, 0, 255, 0);
-    firstFive.setLed(3, 0, 0, 100, 0);
+    
 
-   // firstFive.setAll(0, 255, 0, 0);
+    // ButtonLights::setTrackLight(1, ButtonLights::EMPTY);
+    //ButtonLights::setTrackLight(2, ButtonLights::EMPTY);
 
-    Led::Segment secondFive(5, 10, 50);
+    // Led::Segment TrackOne_Play(0, 8);
+    // Led::Segment TrackOne_OVD(8, 16);
+    // Led::Segment SpecialOne(8*4, 8*5);
+    // 
+    // Led::Segment TrackTwo_Play(8*2, 8*3);
+    // Led::Segment TrackTwo_OVD(8*3, 8*4);
+    // Led::Segment SpecialTwo(8*5, 8*6);
+//
+    // TrackOne_Play.setAll(255, 0, 0, 0);
+    // TrackOne_OVD.setAll(0, 255, 0, 0);
+    // TrackTwo_Play.setAll(0, 0, 255, 0);
+    // TrackTwo_OVD.setAll(0, 0, 0, 255);
+    // SpecialOne.setAll(RGBW_ORANGE);
+    // SpecialTwo.setAll(RGBW_YELLOW);
 
-    secondFive.setAll(RGBW_ORANGE);
+    //ButtonLights::Track1_Play.setAll(255,0,0,0);
 
-    Led::update();
+     Led::update();
 }
 
 void loop()
 {
-    checkInputs();
+    // inputs::checkInputs();
 
-    updateDisplay();
+    // uint32_t inputs = getInputs();
+    // printInputs(inputs);
+    // delay(1000);
 
-    midiUpdate();
+    // updateDisplay();
+
+    // midiUpdate();
+
+    //ButtonLights::setTrackLight(1, ButtonLights::EMPTY);
+    //ButtonLights::setTrackLight(2, ButtonLights::EMPTY);
+
+    // Led::update();
 
     // Led::Test();
 }

@@ -1,3 +1,8 @@
+/*
+timedTasks.h:
+provide the possibility to run commands in regular intervals (using timer Interrupts)
+ */
+
 #ifndef TIMEDTASKS_H
 #define TIMEDTASKS_H
 

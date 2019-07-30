@@ -1,3 +1,8 @@
+/*
+myMidi.h:
+provide simpler functions to trigger Midi-Out and respond to midi-In events
+ */
+
 #ifndef MYMIDI_H
 #define MYMIDI_H
 

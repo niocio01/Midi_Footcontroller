@@ -1,13 +1,21 @@
+/*
+led.h:
+provide simple functions to controll the RGBWLed's
+ */
+
 #ifndef LED_H
 #define LED_H
 
 #include <Arduino.h>
 
+
+
 // create namespace to avoid name reusing
 namespace Led 
 {
 
-const int numLed = 10;
+
+const int numLed = 67; //48  // max 67
 const int pin = 8;
 
 // create color type, used in Config reading / setting
@@ -25,13 +33,17 @@ typedef enum Colors
 
 
 // define colors for easy reference
-#define RGBW_RED 0x00FF0000
-#define RGBW_GREEN 0x0000FF00
-#define RGBW_BLUE 0x000000FF
-#define RGBW_YELLOW 0x00FFFF00
-#define RGBW_PINK 0x00FF1088
-#define RGBW_ORANGE 0x00E05800
-#define RGBW_WHITE 0xFF000000
+#define RGBW_RED    0xFF000000
+#define RGBW_GREEN  0x00FF0000
+#define RGBW_BLUE   0x0000FF00
+#define RGBW_WHITE  0x000000FF
+#define RGBW_YELLOW 0xFFFF0000
+#define RGBW_PINK   0xFF108804
+#define RGBW_ORANGE 0xE0580000
+#define RGBW_VIOLET 0xC000FF00
+
+#define RGBW_BLACK 0x00000000
+
 
 // non class functions
 
@@ -47,11 +59,14 @@ void setMasterBrightness(uint8_t newBrightness);
 // get the number of Leds on the strip
 uint8_t getNum(void);
 
+int getColorCode(Colors_t color);
+
 // test Leds
 void Test(void);
 
 // wipe color thru all Leds
 void colorWipe(int color, int wait);
+
 
 // led class
 class Segment
@@ -110,6 +125,12 @@ private:
     uint32_t end;        // end id of Led Segment
     uint8_t brightness; // brightness of Led Segment
 };
+
+
+
+
+
+
 } // namespace Led
 
 #endif // !LED_H

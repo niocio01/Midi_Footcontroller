@@ -1,3 +1,9 @@
+/*
+pins.h:
+collection of all the Hardware pins on the PCB and their intended function.
+setup all the pins for their intended purpose (set Pullups...)
+ */
+
 #include <core_pins.h>
 
 #ifndef PINS_H
@@ -56,6 +62,10 @@
 
 ///////////////////// SWITCHES /////////////////////
 
+#define PROTOTYP2
+
+#ifdef NORMAL
+
 // TRACK PLAY, OVERDUB
 #define TRACK1_PLAY_PIN     37
 #define TRACK1_OVD_PIN      29
@@ -109,6 +119,65 @@
 #define CSTM_SW3_PINMASK     CORE_PIN32_PINREG & CORE_PIN32_BITMASK
 #define CSTM_SW4_PINMASK     CORE_PIN35_PINREG & CORE_PIN35_BITMASK
 #define CSTM_SW5_PINMASK     CORE_PIN34_PINREG & CORE_PIN34_BITMASK
+
+#endif
+
+#ifdef PROTOTYP2
+
+#define TRACK1_PLAY_PIN     27
+#define TRACK1_OVD_PIN      37
+#define TRACK2_PLAY_PIN     29
+#define TRACK2_OVD_PIN      38
+#define TRACK3_PLAY_PIN     24 // disabled
+#define TRACK3_OVD_PIN      24 // disabled
+#define TRACK4_PLAY_PIN     24 // disabled
+#define TRACK4_OVD_PIN      24 // disabled
+#define TRACK5_PLAY_PIN     24 // disabled
+#define TRACK5_OVD_PIN      24 // disabled
+
+#define TRACK1_PLAY_CONFIG   CORE_PIN27_CONFIG
+#define TRACK1_OVD_CONFIG    CORE_PIN37_CONFIG
+#define TRACK2_PLAY_CONFIG   CORE_PIN29_CONFIG
+#define TRACK2_OVD_CONFIG    CORE_PIN38_CONFIG
+#define TRACK3_PLAY_CONFIG   CORE_PIN24_CONFIG // disabled
+#define TRACK3_OVD_CONFIG    CORE_PIN24_CONFIG // disabled
+#define TRACK4_PLAY_CONFIG   CORE_PIN24_CONFIG // disabled
+#define TRACK4_OVD_CONFIG    CORE_PIN24_CONFIG // disabled
+#define TRACK5_PLAY_CONFIG   CORE_PIN24_CONFIG // disabled
+#define TRACK5_OVD_CONFIG    CORE_PIN24_CONFIG // disabled
+
+#define TRACK1_PLAY_PINMASK  CORE_PIN27_PINREG & CORE_PIN27_BITMASK
+#define TRACK1_OVD_PINMASK   CORE_PIN37_PINREG & CORE_PIN37_BITMASK
+#define TRACK2_PLAY_PINMASK  CORE_PIN29_PINREG & CORE_PIN29_BITMASK
+#define TRACK2_OVD_PINMASK   CORE_PIN38_PINREG & CORE_PIN38_BITMASK
+#define TRACK3_PLAY_PINMASK  CORE_PIN24_PINREG & CORE_PIN24_BITMASK // disabled
+#define TRACK3_OVD_PINMASK   CORE_PIN24_PINREG & CORE_PIN24_BITMASK // disabled
+#define TRACK4_PLAY_PINMASK  CORE_PIN24_PINREG & CORE_PIN24_BITMASK // disabled
+#define TRACK4_OVD_PINMASK   CORE_PIN24_PINREG & CORE_PIN24_BITMASK // disabled
+#define TRACK5_PLAY_PINMASK  CORE_PIN24_PINREG & CORE_PIN24_BITMASK // disabled
+#define TRACK5_OVD_PINMASK   CORE_PIN24_PINREG & CORE_PIN24_BITMASK // disabled
+
+
+// CUSTOM SWITCHES
+#define CSTM_SW1_PIN         28
+#define CSTM_SW2_PIN         39
+#define CSTM_SW3_PIN         24 // disabled
+#define CSTM_SW4_PIN         24 // disabled
+#define CSTM_SW5_PIN         24 // disabled
+
+#define CSTM_SW1_CONFIG      CORE_PIN28_CONFIG
+#define CSTM_SW2_CONFIG      CORE_PIN39_CONFIG
+#define CSTM_SW3_CONFIG      CORE_PIN24_CONFIG // disabled
+#define CSTM_SW4_CONFIG      CORE_PIN24_CONFIG // disabled
+#define CSTM_SW5_CONFIG      CORE_PIN24_CONFIG // disabled
+
+#define CSTM_SW1_PINMASK     CORE_PIN28_PINREG & CORE_PIN28_BITMASK
+#define CSTM_SW2_PINMASK     CORE_PIN39_PINREG & CORE_PIN39_BITMASK
+#define CSTM_SW3_PINMASK     CORE_PIN24_PINREG & CORE_PIN24_BITMASK //disabled
+#define CSTM_SW4_PINMASK     CORE_PIN24_PINREG & CORE_PIN24_BITMASK //disabled
+#define CSTM_SW5_PINMASK     CORE_PIN24_PINREG & CORE_PIN24_BITMASK //disabled
+
+#endif // DEBUG
 
 
 ///////////////////// OTHER PINS /////////////////////

@@ -7,61 +7,115 @@
 //   Teensy 3.5:  1, 5, 8, 10, 26, 32, 33, 48
 //   Teensy 3.6:  1, 5, 8, 10, 26, 32, 33
 
+namespace Led
+{
+
 uint8_t masterBrightness = 255;
 
-byte drawingMemory[Led::numLed * 3];         //  3 bytes per LED
-DMAMEM byte displayMemory[Led::numLed * 12]; // 12 bytes per LED
+byte drawingMemory[numLed * 3];         //  3 bytes per LED
+DMAMEM byte displayMemory[numLed * 12]; // 12 bytes per LED
 
 // create new Led (WS2812Serial) Object
-WS2812Serial leds(Led::numLed, displayMemory, drawingMemory, Led::pin, WS2812_RGBW);
+WS2812Serial leds(numLed, displayMemory, drawingMemory, pin, WS2812_RGBW);
 
 // initiate the Led Strip
-void Led::init(void)
+void init(void)
 {
     leds.begin();
+    for (int i = 0; i < numLed; i++)
+    {
+        leds.setPixel(i, 0, 0, 0, 0);
+    }
+    leds.show();
+    Serial.println("Leds Reset");
 }
 
 // send current frambuffer to leds
-void Led::update(void)
+void update(void)
 {
     leds.show();
 }
 
 // set Brightness multiplier for all Leds
-void Led::setMasterBrightness(uint8_t newBrightness)
+void setMasterBrightness(uint8_t newBrightness)
 {
     masterBrightness = newBrightness;
 }
 
 // get the number of Leds on the strip
-uint8_t Led::getNum(void)
+uint8_t getNum(void)
 {
-    return Led::numLed;
+    return numLed;
+}
+
+int getColorCode(Colors_t color)
+{
+    using namespace Led;
+
+    switch (color)
+    {
+    case RED:
+        return RGBW_RED;
+        break;
+
+    case GREEN:
+        return RGBW_GREEN;
+        break;
+
+    case BLUE:
+        return RGBW_BLUE;
+        break;
+
+    case WHITE:
+        return RGBW_WHITE;
+        break;
+
+    case BLACK:
+        return RGBW_BLACK;
+        break;
+
+    case YELLOW:
+        return RGBW_YELLOW;
+        break;
+
+    case VIOLET:
+        return RGBW_VIOLET;
+        break;
+
+    case ORANGE:
+        return RGBW_ORANGE;
+        break;
+
+    default:
+        return RGBW_WHITE;
+        break;
+    }
 }
 
 // test Leds
-void Led::Test(void)
+void Test(void)
 {
-   // change all the LEDs in 1.5 seconds
-  int microsec = 1500000 / leds.numPixels();
+    // change all the LEDs in 1.5 seconds
+    int microsec = 1500000 / leds.numPixels();
 
-  colorWipe(RGBW_RED, microsec);
-  colorWipe(RGBW_GREEN, microsec);
-  colorWipe(RGBW_BLUE, microsec);
-  colorWipe(RGBW_YELLOW, microsec);
-  colorWipe(RGBW_PINK, microsec);
-  colorWipe(RGBW_ORANGE, microsec);
-  colorWipe(RGBW_WHITE, microsec);
+    colorWipe(RGBW_RED, microsec);
+    colorWipe(RGBW_GREEN, microsec);
+    colorWipe(RGBW_BLUE, microsec);
+    colorWipe(RGBW_WHITE, microsec);
+    colorWipe(RGBW_PINK, microsec);
+    colorWipe(RGBW_ORANGE, microsec);
+    colorWipe(RGBW_YELLOW, microsec);
 }
 
 // wipe color thru all Leds
-void Led::colorWipe(int color, int wait)
+void colorWipe(int color, int wait)
 {
-   for (int i=0; i < leds.numPixels(); i++) {
-    leds.setPixel(i, color);
-    leds.show();
-    delayMicroseconds(wait);
-   }
+    for (int i = 0; i < leds.numPixels(); i++)
+    {
+        leds.setPixel(i, color);
+        leds.show();
+        delayMicroseconds(wait);
+    }
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                        Segement Class                                                  //
@@ -70,7 +124,7 @@ void Led::colorWipe(int color, int wait)
 // ------------------------------------ class Constructors -----------------------------------------------//
 
 // Default Constructor
-Led::Segment::Segment()
+Segment::Segment()
 {
     start = 0;
     end = numLed;
@@ -78,7 +132,7 @@ Led::Segment::Segment()
 }
 
 // Overload Constructor
-Led::Segment::Segment(uint32_t newStart, uint32_t newEnd)
+Segment::Segment(uint32_t newStart, uint32_t newEnd)
 {
     start = newStart;
     end = newEnd;
@@ -86,7 +140,7 @@ Led::Segment::Segment(uint32_t newStart, uint32_t newEnd)
 }
 
 // Overload Constructor
-Led::Segment::Segment(uint32_t newStart, uint32_t newEnd, uint8_t newBrightness)
+Segment::Segment(uint32_t newStart, uint32_t newEnd, uint8_t newBrightness)
 {
     start = newStart;
     end = newEnd;
@@ -96,84 +150,83 @@ Led::Segment::Segment(uint32_t newStart, uint32_t newEnd, uint8_t newBrightness)
 // --------------------------------------- set functions -----------------------------------------------//
 
 // set start id for Led Segment
-void Led::Segment::setStart(uint32_t newStart)
+void Segment::setStart(uint32_t newStart)
 {
- start = newStart;
+    start = newStart;
 }
 
 // set start id for Led Segment
-void Led::Segment::setEnd(uint32_t newEnd)
+void Segment::setEnd(uint32_t newEnd)
 {
- start = newEnd;
+    end = newEnd;
 }
 
 // set start id for Led Segment
-void Led::Segment::setBrightness(uint8_t newBrightness)
+void Segment::setBrightness(uint8_t newBrightness)
 {
- brightness = newBrightness;
+    brightness = newBrightness;
 }
 
 // set color of all segment Led's
-void Led::Segment::setAll(int color)
+void Segment::setAll(int color)
 {
-for (uint32_t i = start ; i < end ; i++)
+    for (uint32_t i = start; i <= end; i++)
     {
-        leds.setPixel(i, ((color >> 16) & 255) * brightness / 255 * masterBrightness / 255,   // red
-                         ((color >> 8) & 255)  * brightness / 255 * masterBrightness / 255,   // green
-                         (color & 255)         * brightness / 255 * masterBrightness / 255,   // blue
-                         ((color >> 24) & 255) * brightness / 255 * masterBrightness / 255 ); // white
-
+        leds.setPixel(i, ((color >> 24) & 255) * brightness / 255 * masterBrightness / 255, // red
+                      ((color >> 16) & 255) * brightness / 255 * masterBrightness / 255,            // green
+                      ((color >> 8) & 255) * brightness / 255 * masterBrightness / 255,     // blue
+                      (color & 255) * brightness / 255 * masterBrightness / 255);   // white
     }
 }
 
 // set color of all segment Led's
-void Led::Segment::setAll(uint8_t red, uint8_t green, uint8_t blue, uint8_t white)
+void Segment::setAll(uint8_t red, uint8_t green, uint8_t blue, uint8_t white)
 {
-    for (uint32_t i = start ; i < end ; i++)
+    for (uint32_t i = start; i <= end; i++)
     {
-        leds.setPixel(i, red   * brightness / 255 * masterBrightness / 255 ,  // red
-                         green * brightness / 255 * masterBrightness / 255,  // green
-                         blue  * brightness / 255 * masterBrightness / 255,  // blue
-                         white * brightness / 255 * masterBrightness / 255); // white
-
+        leds.setPixel(i, red * brightness / 255 * masterBrightness / 255, // red
+                      green * brightness / 255 * masterBrightness / 255,  // green
+                      blue * brightness / 255 * masterBrightness / 255,   // blue
+                      white * brightness / 255 * masterBrightness / 255); // white
     }
 }
 
 // set inidvidual Led of segment
-void Led::Segment::setLed(uint32_t id, int color)
+void Segment::setLed(uint32_t id, int color)
 {
-    leds.setPixel(start + id, ((color >> 16) & 255) * brightness / 255 * masterBrightness / 255,   // red
-                              ((color >> 8) & 255)  * brightness / 255 * masterBrightness / 255,   // green
-                              (color & 255)         * brightness / 255 * masterBrightness / 255,   // blue
-                              ((color >> 24) & 255) * brightness / 255 * masterBrightness / 255 ); // white
+    leds.setPixel(start + id, ((color >> 16) & 255) * brightness / 255 * masterBrightness / 255, // red
+                  ((color >> 8) & 255) * brightness / 255 * masterBrightness / 255,              // green
+                  (color & 255) * brightness / 255 * masterBrightness / 255,                     // blue
+                  ((color >> 24) & 255) * brightness / 255 * masterBrightness / 255);            // white
 }
 
 // set inidvidual Led of segment
-void Led::Segment::setLed(uint32_t id, uint8_t red, uint8_t green, uint8_t blue, uint8_t white)
+void Segment::setLed(uint32_t id, uint8_t red, uint8_t green, uint8_t blue, uint8_t white)
 {
-    leds.setPixel(start + id, red *   brightness / 255 * masterBrightness / 255,
-                              green * brightness / 255 * masterBrightness / 255,
-                              blue *  brightness / 255 * masterBrightness / 255,
-                              white*  brightness / 255 * masterBrightness / 255);
-
+    leds.setPixel(start + id, red * brightness / 255 * masterBrightness / 255,
+                  green * brightness / 255 * masterBrightness / 255,
+                  blue * brightness / 255 * masterBrightness / 255,
+                  white * brightness / 255 * masterBrightness / 255);
 }
 
 // --------------------------------------- get functions -----------------------------------------------//
 
 // get start id for Led Segment
-uint32_t Led::Segment::getStart() const
+uint32_t Segment::getStart() const
 {
     return start;
 }
 
 // get end id for Led Segment
-uint32_t Led::Segment::getEnd() const
+uint32_t Segment::getEnd() const
 {
     return end;
 }
 
 // get end id for Led Segment
-uint8_t Led::Segment::getBrightness() const
+uint8_t Segment::getBrightness() const
 {
     return brightness;
 }
+
+} // namespace Led

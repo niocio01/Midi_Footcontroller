@@ -24,6 +24,11 @@ void changeBank(uint8_t newBank)
     }
 }
 
+Led::Colors_t getTrackColor (uint8_t track)
+{
+    return config.settings.TrackColor[track];
+}
+
 
 uint8_t getButtonMidiCC(uint8_t button)
 {

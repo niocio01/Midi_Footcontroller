@@ -4,6 +4,9 @@
 #include "functionHandler.h"
 #include "inputs.h"
 
+namespace inputs
+{
+
 // ENABLE INPUT-PULLDOWN
 // Set Pint as GPIO
 #define DIGITALINPUT PORT_PCR_PE | PORT_PCR_MUX(1)
@@ -110,7 +113,7 @@ void checkInputs(void)
     {
         uint32_t button = getPressedButton();
 
-        buttonPressed(button);
+        inputs::buttonPressed(button);
     }
 }
 
@@ -129,6 +132,8 @@ bool bottonsWerePressed(uint32_t btnMask)
 
 void buttonPressed(uint32_t button)
 {
+    using namespace FunctionHandler;
+
     if (button > BTN_SELECT)
     {
         footButtonPressed((int)log2(button >> 6)); // get Footswitch Number (0 - 14)
@@ -166,3 +171,4 @@ void buttonPressed(uint32_t button)
         }
     }
 }
+} // end namespace

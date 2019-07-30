@@ -1,3 +1,10 @@
+/*
+config.h:
+read and write configuration data form the SD-Card.
+ */
+
+
+
 #ifndef CONFIG_H
 #define CONFIG_H 
 

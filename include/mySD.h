@@ -1,3 +1,8 @@
+/*
+mySD.h:
+mount the SD-Card and allow access to the data on it to other moules
+ */
+
 #ifndef MYSD_H
 #define MYSD_H
 

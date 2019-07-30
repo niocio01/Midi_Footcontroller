@@ -3,6 +3,10 @@
 #include "display.h"
 #include "config.h"
 #include "myMidi.h"
+#include "lightController.h"
+
+namespace FunctionHandler
+{
 
 uint8_t currentTargetTrack = 1;
 bool trackPlaying[5] = {false};
@@ -84,6 +88,7 @@ void startTrack(uint8_t track)
     goToTargetTrack(track);
     addMidiCommandToQueue(getTargetTrackCC(Play_Rec), 127);
     addMidiCommandToQueue(getTargetTrackCC(Play_Rec), 0);
+    ButtonLights::setTrackLight(track, ButtonLights::trackLight::PLAYING);
 
     trackPlaying[track - 1] = true;
     TrackHasRecording[track - 1] = true;
@@ -246,3 +251,4 @@ void footButtonPressed(uint8_t button)
         }
     }
 }
+} //namespace end
