@@ -74,7 +74,7 @@ void setup()
 
 void loop()
 {
-    // inputs::checkInputs();
+    inputs::checkInputs();
 // 
     // uint32_t inputs = inputs::getInputs();
     // inputs::printInputs(inputs);

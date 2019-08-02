@@ -4,14 +4,335 @@
 #include "config.h"
 #include "myMidi.h"
 #include "lightController.h"
+#include "functionHandler.h"
 
 namespace FunctionHandler
 {
 
 uint8_t currentTargetTrack = 1;
-bool trackPlaying[5] = {false};
-bool trackRecording[5] = {false};
-bool TrackHasRecording[5] = {false};
+
+trackState_t trackState[5] = {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY};
+trackState_t oldTrackState[5] = {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY};
+
+bool waitForNextMesure = true;
+
+// bool trackPlaying[5] = {false};
+// bool trackRecording[5] = {false};
+// bool trackHasRecording[5] = {false};
+
+void footButtonPressed(uint8_t button)
+{
+    Function_Type_t function = getButtonFunction(button);
+    uint8_t track = getButtonAddPar1(button);
+    // uint8_t midiCC = getButtonMidiCC(button);
+
+    Serial.print("Button Nr. ");
+    Serial.print(button);
+    Serial.print(" Pressed    ");
+    Serial.print(" Track");
+    Serial.print(track);
+    Serial.print("    Function: ");
+    // Serial.println(function);
+
+    switch (function)
+    {
+    case Select_Track_Start_Stop:
+        Serial.println("Track Start/Stop");
+        switch (trackState[track])
+        {
+        case EMPTY:
+        Serial.print("Empty");
+            if (waitForNextMesure == true)
+            {
+                Serial.println(" -> Waiting for Recording \n");
+                trackState[track] = WAITING_FOR_RECORDING;
+                ButtonLights::setTrackState(track, ButtonLights::WAITING);
+            }
+            else
+            {
+                trackState[track] = RECORDING;
+                ButtonLights::setTrackState(track, ButtonLights::RECORDING);
+            }
+            break;
+
+        case PAUSED:
+        Serial.print("Paused");
+            if (waitForNextMesure == true)
+            {
+                Serial.println(" -> Waiting for Playing \n");
+                trackState[track] = WAITING_FOR_PLAYING;                
+                ButtonLights::setTrackState(track, ButtonLights::WAITING);
+            }
+            else
+            {
+                trackState[track] = PLAYING;
+                ButtonLights::setTrackState(track, ButtonLights::PLAYING);
+            }
+            break;
+
+        case PLAYING:
+        Serial.print("Playing");
+            if (waitForNextMesure == true)
+            {
+                Serial.println(" -> Waiting for Pausing\n");
+                trackState[track] = WAITING_FOR_PAUSING;
+                ButtonLights::setTrackState(track, ButtonLights::WAITING);
+            }
+            else
+            {
+                trackState[track] = PAUSED;
+                ButtonLights::setTrackState(track, ButtonLights::PAUSED);
+            }
+            break;
+
+        case RECORDING:
+        Serial.print("Recording");
+            if (waitForNextMesure == true)
+            {
+                Serial.print(" -> Waiting for Pausing\n");
+                trackState[track] = WAITING_FOR_PAUSING;
+                ButtonLights::setTrackState(track, ButtonLights::WAITING);
+            }
+            else
+            {
+                trackState[track] = PAUSED;
+                ButtonLights::setTrackState(track, ButtonLights::PAUSED);
+            }
+            break;
+
+        case WAITING_FOR_PLAYING:
+            Serial.print("Waiting for Playing");
+            trackState[track] = oldTrackState[track];
+            
+            break;
+
+        case WAITING_FOR_RECORDING:
+            Serial.print("Waiting for Recording");
+            trackState[track] = oldTrackState[track];
+            if (oldTrackState[track] == EMPTY)
+            {
+                Serial.println(" -> Empty \n");
+                ButtonLights::setTrackState(track, ButtonLights::EMPTY);
+            }
+            else if (oldTrackState[track] == PAUSED)
+            {
+                Serial.println(" -> Paused\n");
+                ButtonLights::setTrackState(track, ButtonLights::PAUSED);
+            }
+            else if (oldTrackState[track] == RECORDING)
+            {
+                Serial.println(" -> Recording\n");
+                ButtonLights::setTrackState(track, ButtonLights::RECORDING);
+            }
+            break;
+
+        case WAITING_FOR_PAUSING:
+            Serial.print("Waiting for Pausing");
+            trackState[track] = oldTrackState[track];
+            // TODO update Lighting
+            break;
+
+        default:
+            Serial.print("ERROR: unexpected status in Select_Track_Start_Stop (");
+            Serial.println(trackState[track]);
+
+            break;
+        }
+    break;
+    case Select_Track_Play_Rec:
+        switch (trackState[track])
+        {
+        case EMPTY:
+            if (waitForNextMesure == true)
+            {
+                trackState[track] = WAITING_FOR_RECORDING;
+                // TODO update Lighting
+            }
+            else
+            {
+                trackState[track] = RECORDING;
+            }
+            break;
+
+        case PAUSED:
+            if (waitForNextMesure == true)
+            {
+                trackState[track] = WAITING_FOR_RECORDING;
+                // TODO update Lighting
+            }
+            else
+            {
+                trackState[track] = RECORDING;
+            }
+            break;
+
+        case PLAYING:
+            if (waitForNextMesure == true)
+            {
+                trackState[track] = WAITING_FOR_RECORDING;
+                // TODO update Lighting
+            }
+            else
+            {
+                trackState[track] = RECORDING;
+            }
+            break;
+
+        case RECORDING:
+            if (waitForNextMesure == true)
+            {
+                trackState[track] = WAITING_FOR_PLAYING;
+                // TODO update Lighting
+            }
+            else
+            {
+                trackState[track] = PLAYING;
+            }
+            break;
+
+        case WAITING_FOR_PLAYING:
+            trackState[track] = oldTrackState[track];
+            // TODO update Lighting
+            break;
+
+        case WAITING_FOR_RECORDING:
+            trackState[track] = oldTrackState[track];
+            // TODO update Lighting
+            break;
+
+        case WAITING_FOR_PAUSING:
+            trackState[track] = oldTrackState[track];
+            // TODO update Lighting
+            break;
+
+        default:
+            Serial.println("ERROR: unexpected status in Select_Track_Play_Rec");
+            break;
+        }
+    break;
+
+    case All_Start_Stop:  // DEBUG: force an update of the current state
+        Serial.print("Forcing Update");
+        updateStatus();
+        break;
+
+    default:
+        Serial.print("not Implemented Function called. (");
+        Serial.print(function);
+        Serial.println(")");
+        break;
+    }
+    if (waitForNextMesure == false)
+    {
+        updateStatus(); // do it right away otherwise the update command will get triggered form the myMidi Module.
+        
+    }
+
+    else // other functions
+    {
+        switch (function)
+        {
+        }
+    }
+}
+
+void updateStatus(void)
+{
+    for (int track = 0; track < 5; track++)
+    {
+        if (trackState[track] != oldTrackState[track]) // only if something changed
+        {
+            Serial.print(" -> ");
+            goToTargetTrack(track);
+            switch (trackState[track])
+            {
+            case EMPTY:
+                // do nothing
+                break;
+
+            case PAUSED: // it was Playing or recording and should get paused
+                Serial.print("Paused");
+                addMidiCommandToQueue(getTargetTrackCC(Stop), 127);
+                addMidiCommandToQueue(getTargetTrackCC(Stop), 0);
+                break;
+
+            case WAITING_FOR_PAUSING: // same as Paused, except the aditional state change
+                Serial.print("\nWaiting for Pausing -> paused");
+                trackState[track] = PAUSED;
+                addMidiCommandToQueue(getTargetTrackCC(Stop), 127);
+                addMidiCommandToQueue(getTargetTrackCC(Stop), 0);
+                ButtonLights::setTrackState(track, ButtonLights::PAUSED);
+                break;
+
+            case PLAYING: // it was paused and needs to be started.
+                Serial.print("Playing");
+                addMidiCommandToQueue(getTargetTrackCC(Play_Rec), 127);
+                addMidiCommandToQueue(getTargetTrackCC(Play_Rec), 0);
+                break;
+
+            case WAITING_FOR_PLAYING: // do the same as with playing, except the aditional state change
+                Serial.print("\nWaiting for Playing -> Playing");
+                trackState[track] = PLAYING;
+                addMidiCommandToQueue(getTargetTrackCC(Play_Rec), 127);
+                addMidiCommandToQueue(getTargetTrackCC(Play_Rec), 0);
+                ButtonLights::setTrackState(track, ButtonLights::PLAYING);
+                break;
+
+            case RECORDING:                        // it was paused or not recorded yet and needs to be recording
+                Serial.print("Recording"); 
+                if (oldTrackState[track] == EMPTY) // start the track, since it is empty it will start recording automatically
+                {
+                    addMidiCommandToQueue(getTargetTrackCC(Play_Rec), 127);
+                    addMidiCommandToQueue(getTargetTrackCC(Play_Rec), 0);
+                }
+                else if (oldTrackState[track] == PAUSED) // start it twice form pause, once to start playing and a second time to record
+                {
+                    addMidiCommandToQueue(getTargetTrackCC(Play_Rec), 127);
+                    addMidiCommandToQueue(getTargetTrackCC(Play_Rec), 0);
+                    addMidiCommandToQueue(getTargetTrackCC(Play_Rec), 127);
+                    addMidiCommandToQueue(getTargetTrackCC(Play_Rec), 0);
+                }
+                else
+                {
+                    Serial.println("ERROR: unexpected state switch for Recording");
+                }
+                break;
+
+            case WAITING_FOR_RECORDING:            // same as Recording, except the aditional state change
+                Serial.print("\nWaiting for Recording -> Recording");
+                trackState[track] = RECORDING;
+                if (oldTrackState[track] == EMPTY) // start the track, since it is empty it will start recording automatically
+                {
+                    addMidiCommandToQueue(getTargetTrackCC(Play_Rec), 127);
+                    addMidiCommandToQueue(getTargetTrackCC(Play_Rec), 0);
+                    
+                }
+                else if (oldTrackState[track] == PAUSED) // start it twice form pause, once to start playing and a second time to record
+                {
+                    addMidiCommandToQueue(getTargetTrackCC(Play_Rec), 127);
+                    addMidiCommandToQueue(getTargetTrackCC(Play_Rec), 0);
+                    addMidiCommandToQueue(getTargetTrackCC(Play_Rec), 127);
+                    addMidiCommandToQueue(getTargetTrackCC(Play_Rec), 0);
+                }
+                else
+                {
+                    Serial.println("ERROR: unexpected state switch for Waiting for recording");
+                }
+                ButtonLights::setTrackState(track, ButtonLights::RECORDING);
+                
+                break;
+
+            default:
+                Serial.println("ERROR: unexpected state switch");
+                break;
+            }
+        }
+        oldTrackState[track] = trackState[track];
+    }
+    Serial.println();
+    Serial.println();
+    
+}
 
 void bankUpPressed(void)
 {
@@ -83,15 +404,16 @@ void goToTargetTrack(uint8_t targetTrack)
     }
 }
 
+/*
+
 void startTrack(uint8_t track)
 {
     goToTargetTrack(track);
     addMidiCommandToQueue(getTargetTrackCC(Play_Rec), 127);
     addMidiCommandToQueue(getTargetTrackCC(Play_Rec), 0);
-    ButtonLights::setTrackState(track, ButtonLights::trackState_t::PLAYING);
 
     trackPlaying[track - 1] = true;
-    TrackHasRecording[track - 1] = true;
+    trackHasRecording[track - 1] = true;
     Serial.print("Track Nr ");
     Serial.print(track);
     Serial.println(" Started");
@@ -116,7 +438,7 @@ void startOnStart(uint8_t track, bool startWithOverdub)
     if (TracksToStart & ((int)pow(2, track - 1))) // is the pressed Track supposed to be started
     {
         startTrack(track);
-        if (((startWithOverdub == true) & (TrackHasRecording[track - 1] == true))) // press it twice to go into overdub if its allready recorded
+        if (((startWithOverdub == true) & (trackHasRecording[track - 1] == true))) // press it twice to go into overdub if its allready recorded
         {
             startTrack(track); // can also be used to start overdub.
         }
@@ -124,7 +446,7 @@ void startOnStart(uint8_t track, bool startWithOverdub)
 
     for (int i = 0; i < 5; i++)
     {
-        if (((TrackHasRecording[i] == true) & (trackPlaying[i] == false)))
+        if (((trackHasRecording[i] == true) & (trackPlaying[i] == false)))
         {
             if ((TracksToStart & ((int)pow(2, i))) && (i != track - 1)) // is the this Track supposed to be started and isnt the pressed one
             {
@@ -145,7 +467,7 @@ void stopOnStart(uint8_t track)
 
     for (int i = 0; i < 5; i++)
     {
-        if (((TrackHasRecording[i] == true) & (trackPlaying[i] == true)))
+        if (((trackHasRecording[i] == true) & (trackPlaying[i] == true)))
         {
             if ((TracksToStop & ((int)pow(2, i))) && (i != track - 1)) // is the this Track supposed to be started and isnt the pressed one
             {
@@ -173,82 +495,6 @@ void stopOnStop(uint8_t track)
     }
 }
 
-void footButtonPressed(uint8_t button)
-{
-    Function_Type_t function = getButtonFunction(button);
-    uint8_t track = getButtonAddPar1(button);
-    // uint8_t midiCC = getButtonMidiCC(button);
+*/
 
-    Serial.print("Button Nr. ");
-    Serial.print(button);
-    Serial.println(" Pressed");
-    Serial.print("Function: ");
-    Serial.println(function);
-
-    if ((function >= Select_Track_Play_Rec) && (function <= Select_Track_Play_Level))
-    {
-
-        switch (function)
-        {
-        case Select_Track_Start_Stop:
-            if (trackPlaying[track - 1] == false) // start track
-            {
-                stopOnStart(track);         // stop first, to allow start from the begining
-                startOnStart(track, false); // start track
-            }
-            else // stop
-            {
-                stopOnStop(track);
-            }
-
-            break;
-
-        case Select_Track_Play_Rec: // overdub
-
-            if ((trackPlaying[track - 1] == true) || (TrackHasRecording[track - 1] == false)) // start Track
-            {
-                startTrack(track); // also does Overdub on/off
-            }
-            else // Start twise to enable Overdub
-            {
-                startTrack(track);
-                startTrack(track); // also does Overdub on/off
-            }
-            break;
-
-        default:
-            break;
-        }
-    }
-
-    else
-    {
-        switch (function)
-        {
-        case Target_Track_Inc:
-            sendMidiCC(getButtonMidiCC(button), 127);
-            delay(10);
-            sendMidiCC(getButtonMidiCC(button), 0);
-            Serial.println("Target Track Increased\n");
-            break;
-
-        case Target_Track_Dec:
-            sendMidiCC(getButtonMidiCC(button), 127);
-            delay(10);
-            sendMidiCC(getButtonMidiCC(button), 0);
-            Serial.println("Target Track Decreased\n");
-            break;
-
-        case Target_Track_Play_Rec:
-            sendMidiCC(getButtonMidiCC(button), 127);
-            delay(10);
-            sendMidiCC(getButtonMidiCC(button), 0);
-            Serial.println("Track Started/Stopped\n");
-            break;
-
-        default:
-            Serial.println("not Implemented Function called.\n");
-        }
-    }
-}
-} //namespace end
+} // namespace FunctionHandler

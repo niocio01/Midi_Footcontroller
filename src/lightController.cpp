@@ -8,7 +8,7 @@
 namespace ButtonLights
 {
 
-const uint8_t LOW_BRIGHTNESS = 20;
+const uint8_t LOW_BRIGHTNESS = 25;
 const uint8_t MID_BRIGHTNESS = 80;
 const uint8_t HIGH_BRIGHTNESS = 255;
 
@@ -28,9 +28,9 @@ void init(void)
         segmentLights[i].setEnd(8 * (i + 1) - 1);
     }
 
-    ButtonLights::setTrackState(0, ButtonLights::WAITING);
-    ButtonLights::setTrackState(1, ButtonLights::PLAYING);
-    ButtonLights::setTrackState(2, ButtonLights::RECORDING);
+    ButtonLights::setTrackState(0, ButtonLights::EMPTY);
+    ButtonLights::setTrackState(1, ButtonLights::EMPTY);
+    ButtonLights::setTrackState(2, ButtonLights::EMPTY);
 
     // segmentLights[0].setAll(RGBW_YELLOW);
     // segmentLights[1].setAll(RGBW_GREEN);

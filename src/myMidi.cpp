@@ -1,6 +1,7 @@
 #include <MIDI.h>
 #include "configEditor.h"
 #include "myMidi.h"
+#include "functionHandler.h"
 
 MIDI_CREATE_INSTANCE(HardwareSerial, Serial1, MIDI);
 const int channel = 1;
@@ -22,10 +23,7 @@ void addMidiCommandToQueue(uint8_t cc , uint8_t val)
     commandQueue[0].val = val;
 }
 
-void SetSendQueuedCommandsFlag (void)
-{
-    sendQueuedCommands = true;
-}
+
 
 
 void handleStart(void) // callback function
@@ -45,7 +43,7 @@ void handleClock(void) // callback function
         if (mesureCounter == 4)
         {
             mesureCounter = 0;
-            SetSendQueuedCommandsFlag();
+            FunctionHandler::updateStatus();
         }
         digitalWrite(LED_BUILTIN, HIGH);
     }
@@ -97,3 +95,5 @@ void midiUpdate(void)
     }
 
 }
+
+

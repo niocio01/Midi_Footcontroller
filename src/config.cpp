@@ -124,52 +124,52 @@ void readBank(uint8_t bankNr)
 
             config.settings.function[0].midi_CC = 0;
             config.settings.function[0].function = Select_Track_Start_Stop;
-            config.settings.function[0].additionalParameter[0] = 1; // track 1
+            config.settings.function[0].additionalParameter[0] = 0; // track 1
             config.settings.function[0].additionalParameter[1] = 0;
 
             config.settings.function[1].midi_CC = 0;
             config.settings.function[1].function = Select_Track_Play_Rec;
-            config.settings.function[1].additionalParameter[0] = 1; // track 1
+            config.settings.function[1].additionalParameter[0] = 0; // track 1
             config.settings.function[1].additionalParameter[1] = 0;
 
             config.settings.function[2].midi_CC = 0;
             config.settings.function[2].function = Select_Track_Start_Stop;
-            config.settings.function[2].additionalParameter[0] = 2; // track 2
+            config.settings.function[2].additionalParameter[0] = 1; // track 2
             config.settings.function[2].additionalParameter[1] = 0;
 
             config.settings.function[3].midi_CC = 0;
             config.settings.function[3].function = Select_Track_Play_Rec;
-            config.settings.function[3].additionalParameter[0] = 2; // track 2
+            config.settings.function[3].additionalParameter[0] = 1; // track 2
             config.settings.function[3].additionalParameter[1] = 0;
 
             config.settings.function[4].midi_CC = 0;
             config.settings.function[4].function = Select_Track_Start_Stop;
-            config.settings.function[4].additionalParameter[0] = 3; // track 3
+            config.settings.function[4].additionalParameter[0] = 2; // track 3
             config.settings.function[4].additionalParameter[1] = 0;
 
             config.settings.function[5].midi_CC = 0;
             config.settings.function[5].function = Select_Track_Play_Rec;
-            config.settings.function[5].additionalParameter[0] = 3; // track 3
+            config.settings.function[5].additionalParameter[0] = 2; // track 3
             config.settings.function[5].additionalParameter[1] = 0;
 
             config.settings.function[6].midi_CC = 0;
             config.settings.function[6].function = Select_Track_Start_Stop;
-            config.settings.function[6].additionalParameter[0] = 4; // track 4
+            config.settings.function[6].additionalParameter[0] = 3; // track 4
             config.settings.function[6].additionalParameter[1] = 0;
 
             config.settings.function[7].midi_CC = 0;
             config.settings.function[7].function = Select_Track_Play_Rec;
-            config.settings.function[7].additionalParameter[0] = 4; // track 4
+            config.settings.function[7].additionalParameter[0] = 3; // track 4
             config.settings.function[7].additionalParameter[1] = 0;
 
             config.settings.function[8].midi_CC = 0;
             config.settings.function[8].function = Select_Track_Start_Stop;
-            config.settings.function[8].additionalParameter[0] = 5; // track 5
+            config.settings.function[8].additionalParameter[0] = 4; // track 5
             config.settings.function[8].additionalParameter[1] = 0;
 
             config.settings.function[9].midi_CC = 0;
             config.settings.function[9].function = Select_Track_Play_Rec;
-            config.settings.function[9].additionalParameter[0] = 5; // track 5
+            config.settings.function[9].additionalParameter[0] = 4; // track 5
             config.settings.function[9].additionalParameter[1] = 0;
 
             config.settings.function[10].midi_CC = 11;
