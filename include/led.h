@@ -15,7 +15,7 @@ namespace Led
 {
 
 
-const int numLed = 48; //48
+const int numLed = 48+25; //48
 const int pin = 8;
 
 // create color type, used in Config reading / setting

@@ -6,12 +6,13 @@ provide the possibility to run commands in regular intervals (using timer Interr
 #ifndef TIMEDTASKS_H
 #define TIMEDTASKS_H
 
-void initTimedTasks(void);
+namespace TimedTasks
+{
 
-void ftm0_isr(void);
+void timerInit(void);
 
 void task0 (void);
-//void task1 (void);
+void task1 (void);
 //void task2 (void);
 //void task3 (void);
 //void task4 (void);
@@ -19,5 +20,8 @@ void task0 (void);
 //void task6 (void);
 //void task7 (void);
 
+void resetTask1(void);
+
+} // end namespace
 
 #endif // !TIMEDTASKS_H

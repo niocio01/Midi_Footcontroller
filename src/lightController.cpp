@@ -3,11 +3,17 @@
 #include "configEditor.h"
 #include "arduino.h"
 #include "led.h"
+#include "timedTasks.h"
 
 namespace ButtonLights
 {
 
 Led::Segment segmentLights[6];
+
+trackState_t trackState[3] = {};
+trackState_t OldTrackState[3] = {};
+
+bool blinkingState[3] = {false};
 
 void init(void)
 {
@@ -40,44 +46,90 @@ void init(void)
     Serial.println("initdone");
 }
 
-void setTrackLight(uint8_t track, ButtonLights::trackLight_t type)
+void setTrackState(uint8_t track, trackState_t state)
 {
-    int color = getColorCode(getTrackColor(track - 1));
-    Serial.print("setting Track Nr. ");
-    Serial.print(track);
-    Serial.print(" to color: 0x");
-    Serial.println(color, HEX);
+    trackState[track] = state;
 
-    switch (type)
+    if (state == WAITING)
     {
-    case EMPTY:
-
-        segmentLights[(track - 1) * 2].setBrightness(25);
-        segmentLights[((track - 1) * 2) + 1].setBrightness(25);
-
-        segmentLights[(track - 1) * 2].setAll(color);
-        segmentLights[((track - 1) * 2) + 1].setAll(color);
-
-        break;
-
-    case PAUSED:
-
-        segmentLights[(track - 1) * 2].setBrightness(80);
-        segmentLights[((track - 1) * 2) + 1].setBrightness(80);
-
-        segmentLights[(track - 1) * 2].setAll(color);
-        segmentLights[((track - 1) * 2) + 1].setAll(color);
-
-        break;
-
-    default:
-        break;
+        blinkingState[track] = true;
+        TimedTasks::resetTask1();
     }
-    Led::update();
+    else
+    {
+        ButtonLights::update();
+    }
+    
+    
 }
 
-void updateButtonLights(void)
+void update(void)
 {
+
+    for (int track = 0; track < 3; track++)
+    {
+        if (trackState[track] != OldTrackState[track] or trackState[track] == WAITING)
+        {
+            // Serial.print("Track ");
+            // Serial.print(track);
+            // Serial.print(": State ");
+            // Serial.println(trackState[track]);
+
+
+            int color = getColorCode(getTrackColor(track));
+
+            switch (trackState[track])
+            {
+            case EMPTY:
+
+                segmentLights[track * 2].setBrightness(25);
+                segmentLights[track * 2 + 1].setBrightness(25);
+
+                segmentLights[track * 2].setAll(color);
+                segmentLights[track * 2 + 1].setAll(color);
+
+                Serial.print("Setting Track ");
+                Serial.print(track);
+                Serial.print(" to Color 0x");
+                Serial.println(color, HEX);
+
+                break;
+
+            case WAITING:
+
+                if (blinkingState[track] == false)
+                {
+                    blinkingState[track] = true;
+                    segmentLights[track * 2].setBrightness(50);
+                    segmentLights[track * 2 + 1].setBrightness(50);
+
+                    segmentLights[track * 2].setAll(color);
+                    segmentLights[track * 2 + 1].setAll(color);
+                }
+                else
+                {
+                    blinkingState[track] = false;
+                    segmentLights[track * 2].setBrightness(150);
+                    segmentLights[track * 2 + 1].setBrightness(150);
+
+                    segmentLights[track * 2].setAll(color);
+                    segmentLights[track * 2 + 1].setAll(color);
+                }
+                break;
+
+            default:
+                Serial.print("Unimplemented light Update called (");
+                Serial.print("Track ");
+                Serial.print(track);
+                Serial.print(" with state ");
+                Serial.print(trackState[track]);
+                Serial.println(")");
+                break;
+            }
+        }
+        OldTrackState[track] = trackState[track]; // update Old Buffer to current one
+    }
+    Led::update();
 }
 
 } // namespace ButtonLights

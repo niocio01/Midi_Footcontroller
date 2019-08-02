@@ -88,7 +88,7 @@ void startTrack(uint8_t track)
     goToTargetTrack(track);
     addMidiCommandToQueue(getTargetTrackCC(Play_Rec), 127);
     addMidiCommandToQueue(getTargetTrackCC(Play_Rec), 0);
-    ButtonLights::setTrackLight(track, ButtonLights::trackLight::PLAYING);
+    ButtonLights::setTrackState(track, ButtonLights::trackState_t::PLAYING);
 
     trackPlaying[track - 1] = true;
     TrackHasRecording[track - 1] = true;

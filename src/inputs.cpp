@@ -20,7 +20,7 @@ volatile uint32_t wasPressedBuffer = 0;
 void initInputs(void)
 {
 
-    initTimedTasks();
+    // requires TimedTasks::init();
 
     BTN_BK_UP_CONFIG = DIGITALINPUT;
     BTN_BK_DWN_CONFIG = DIGITALINPUT;
@@ -30,7 +30,7 @@ void initInputs(void)
     BTN_SELECT_CONFIG = DIGITALINPUT;
 
     ENCODER_CLK_CONFIG = DIGITALINPUT;
-    ENCODER_DT_CONFIG = DIGITALINPUT;
+    // ENCODER_DT_CONFIG = DIGITALINPUT; // Disabled for Debug
 
     PEDAL_CONFIG = ANALOGINPUT;
 

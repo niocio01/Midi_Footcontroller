@@ -5,6 +5,7 @@
         "PLATFORMIO_CALLER": "vscode"
     },
     "files.associations": {
-        "twi.h": "c"
+        "twi.h": "c",
+        "*.tcc": "cpp"
     }
 }

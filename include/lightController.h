@@ -36,23 +36,22 @@ typedef enum buttons
 
 } buttons_t;
 
-typedef enum trackLight
+typedef enum trackState
 {
+    INIT,
     EMPTY,
     PAUSED,
     PLAYING,
     RECORDING,
     WAITING
 
-} trackLight_t;
+} trackState_t;
 
 void init(void);
 
-void setButtonColor(uint8_t button, int color);
+void setTrackState(uint8_t track, trackState_t state);
 
-void setButtonBrightness(uint8_t button, uint8_t brightness);
-
-void setTrackLight(uint8_t track, ButtonLights::trackLight_t type);
+void update(void);
 
 }; // END NAMESPACE
 

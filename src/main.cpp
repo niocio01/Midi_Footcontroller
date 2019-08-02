@@ -20,24 +20,32 @@ void setup()
 {
 
     initSD();
+    
+    Led::init();
+
+    ButtonLights::init();
+// 
+    ButtonLights::setTrackState(0, ButtonLights::WAITING);
+    ButtonLights::setTrackState(1, ButtonLights::EMPTY);
+    ButtonLights::setTrackState(2, ButtonLights::EMPTY);
+// 
+    // ButtonLights::update();
 
     // displaySetup();
 
-    // inputs::initInputs();
+    TimedTasks::timerInit();
+
+    inputs::initInputs();
 
     // midiSetup();
 
-    Led::init();
+   
 
     // setUpdateFlag();
 
     // Led::setMasterBrightness(100);
 
-    ButtonLights::init();
-
-    ButtonLights::setTrackLight(1, ButtonLights::EMPTY);
-    ButtonLights::setTrackLight(2, ButtonLights::PAUSED);
-    ButtonLights::setTrackLight(3, ButtonLights::EMPTY);
+    
 
   
      // Led::Segment TrackOne_Play(0, 8);
@@ -58,26 +66,27 @@ void setup()
     //ButtonLights::Track1_Play.setAll(255,0,0,0);
 
     // Led::update();
+
+    
+
     Serial.println("Setup done");
 }
 
 void loop()
 {
     // inputs::checkInputs();
-
-    // uint32_t inputs = getInputs();
-    // printInputs(inputs);
+// 
+    // uint32_t inputs = inputs::getInputs();
+    // inputs::printInputs(inputs);
     // delay(1000);
 
     // updateDisplay();
 
     // midiUpdate();
 
-    //ButtonLights::setTrackLight(1, ButtonLights::EMPTY);
-    //ButtonLights::setTrackLight(2, ButtonLights::EMPTY);
-
-    // Led::update();
+    //Led::update();
     
     // Led::Test();
-    
+
+    // Serial.print("1");
 }
