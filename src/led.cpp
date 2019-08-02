@@ -167,6 +167,7 @@ void Segment::setBrightness(uint8_t newBrightness)
     brightness = newBrightness;
 }
 
+//----------------------------------------------------Set All-----------------------------------------------------------------//
 // set color of all segment Led's
 void Segment::setAll(int color)
 {
@@ -179,7 +180,6 @@ void Segment::setAll(int color)
     }
 }
 
-// set color of all segment Led's
 void Segment::setAll(uint8_t red, uint8_t green, uint8_t blue, uint8_t white)
 {
     for (uint32_t i = start; i <= end; i++)
@@ -191,6 +191,27 @@ void Segment::setAll(uint8_t red, uint8_t green, uint8_t blue, uint8_t white)
     }
 }
 
+//----------------------------------------------------Set Top-----------------------------------------------------------------//
+// set color of the top 4 Led's
+void Segment::setTop(int color)
+{
+    for (uint32_t i = start; i <= start; i++)
+    {
+        leds.setPixel(i+25, ((color >> 24) & 255) * brightness / 255 * masterBrightness / 255, // red
+                      ((color >> 16) & 255) * brightness / 255 * masterBrightness / 255,            // green
+                      ((color >> 8) & 255) * brightness / 255 * masterBrightness / 255,     // blue
+                      (color & 255) * brightness / 255 * masterBrightness / 255);   // white
+    }
+    for (uint32_t i = end; i <= end; i++)
+    {
+        leds.setPixel(i+25, ((color >> 24) & 255) * brightness / 255 * masterBrightness / 255, // red
+                      ((color >> 16) & 255) * brightness / 255 * masterBrightness / 255,            // green
+                      ((color >> 8) & 255) * brightness / 255 * masterBrightness / 255,     // blue
+                      (color & 255) * brightness / 255 * masterBrightness / 255);   // white
+    }
+}
+
+//----------------------------------------------------Set Led-----------------------------------------------------------------//
 // set inidvidual Led of segment
 void Segment::setLed(uint32_t id, int color)
 {
@@ -200,7 +221,6 @@ void Segment::setLed(uint32_t id, int color)
                   ((color >> 24) & 255) * brightness / 255 * masterBrightness / 255);            // white
 }
 
-// set inidvidual Led of segment
 void Segment::setLed(uint32_t id, uint8_t red, uint8_t green, uint8_t blue, uint8_t white)
 {
     leds.setPixel(start + id+25, red * brightness / 255 * masterBrightness / 255,

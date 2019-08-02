@@ -8,6 +8,10 @@
 namespace ButtonLights
 {
 
+const uint8_t LOW_BRIGHTNESS = 20;
+const uint8_t MID_BRIGHTNESS = 80;
+const uint8_t HIGH_BRIGHTNESS = 255;
+
 Led::Segment segmentLights[6];
 
 trackState_t trackState[3] = {};
@@ -24,15 +28,9 @@ void init(void)
         segmentLights[i].setEnd(8 * (i + 1) - 1);
     }
 
-    for (int j = 0; j < 6; j++)
-    {
-        Serial.print("Segment ");
-        Serial.print(j);
-        Serial.print(" Start: ");
-        Serial.print(segmentLights[j].getStart());
-        Serial.print(" End: ");
-        Serial.println(segmentLights[j].getEnd());
-    }
+    ButtonLights::setTrackState(0, ButtonLights::WAITING);
+    ButtonLights::setTrackState(1, ButtonLights::PLAYING);
+    ButtonLights::setTrackState(2, ButtonLights::RECORDING);
 
     // segmentLights[0].setAll(RGBW_YELLOW);
     // segmentLights[1].setAll(RGBW_GREEN);
@@ -59,8 +57,6 @@ void setTrackState(uint8_t track, trackState_t state)
     {
         ButtonLights::update();
     }
-    
-    
 }
 
 void update(void)
@@ -70,38 +66,51 @@ void update(void)
     {
         if (trackState[track] != OldTrackState[track] or trackState[track] == WAITING)
         {
-            // Serial.print("Track ");
-            // Serial.print(track);
-            // Serial.print(": State ");
-            // Serial.println(trackState[track]);
-
 
             int color = getColorCode(getTrackColor(track));
 
             switch (trackState[track])
             {
             case EMPTY:
-
-                segmentLights[track * 2].setBrightness(25);
-                segmentLights[track * 2 + 1].setBrightness(25);
+                segmentLights[track * 2].setBrightness(LOW_BRIGHTNESS);
+                segmentLights[track * 2 + 1].setBrightness(LOW_BRIGHTNESS);
 
                 segmentLights[track * 2].setAll(color);
                 segmentLights[track * 2 + 1].setAll(color);
-
-                Serial.print("Setting Track ");
-                Serial.print(track);
-                Serial.print(" to Color 0x");
-                Serial.println(color, HEX);
-
                 break;
+
+            case PAUSED:
+                segmentLights[track * 2].setBrightness(MID_BRIGHTNESS);
+                segmentLights[track * 2 + 1].setBrightness(MID_BRIGHTNESS);
+
+                segmentLights[track * 2].setAll(color);
+                segmentLights[track * 2 + 1].setAll(color);
+                break;
+
+            case PLAYING:
+                segmentLights[track * 2].setBrightness(HIGH_BRIGHTNESS);
+                segmentLights[track * 2 + 1].setBrightness(MID_BRIGHTNESS);
+
+                segmentLights[track * 2].setAll(color);
+                segmentLights[track * 2 + 1].setAll(color);
+                break;
+
+            case RECORDING:
+                segmentLights[track * 2].setBrightness(MID_BRIGHTNESS);
+                segmentLights[track * 2 + 1].setBrightness(HIGH_BRIGHTNESS);
+
+                segmentLights[track * 2].setAll(color);
+                segmentLights[track * 2 + 1].setAll(color);
+                break;
+
 
             case WAITING:
 
                 if (blinkingState[track] == false)
                 {
                     blinkingState[track] = true;
-                    segmentLights[track * 2].setBrightness(50);
-                    segmentLights[track * 2 + 1].setBrightness(50);
+                    segmentLights[track * 2].setBrightness(MID_BRIGHTNESS);
+                    segmentLights[track * 2 + 1].setBrightness(MID_BRIGHTNESS);
 
                     segmentLights[track * 2].setAll(color);
                     segmentLights[track * 2 + 1].setAll(color);
@@ -109,8 +118,8 @@ void update(void)
                 else
                 {
                     blinkingState[track] = false;
-                    segmentLights[track * 2].setBrightness(150);
-                    segmentLights[track * 2 + 1].setBrightness(150);
+                    segmentLights[track * 2].setBrightness(HIGH_BRIGHTNESS);
+                    segmentLights[track * 2 + 1].setBrightness(HIGH_BRIGHTNESS);
 
                     segmentLights[track * 2].setAll(color);
                     segmentLights[track * 2 + 1].setAll(color);

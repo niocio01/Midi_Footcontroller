@@ -9,7 +9,7 @@ namespace TimedTasks
 
 #define UPDATE_INTERVALL 10000
 #define UPDATE_INTERVALL_LEDS 50000
-#define NO_OF_INTERUPTS_LEDS 4
+#define NO_OF_INTERUPTS_LEDS 3
 
 uint8_t NoOfInterrupt_Led = 0;
 
@@ -94,10 +94,10 @@ void ftm3_isr(void)
         FTM3_C1SC &= ~FTM_CSC_CHF;
         TimedTasks::task1();
     }
-    // if (FTM3_C2SC & FTM_CSC_CHF) { FTM3_C2SC &= ~FTM_CSC_CHF; } task2();
-    // if (FTM3_C3SC & FTM_CSC_CHF) { FTM3_C3SC &= ~FTM_CSC_CHF; } task3();
-    // if (FTM3_C4SC & FTM_CSC_CHF) { FTM3_C4SC &= ~FTM_CSC_CHF; } task4();
-    // if (FTM3_C5SC & FTM_CSC_CHF) { FTM3_C5SC &= ~FTM_CSC_CHF; } task5();
-    // if (FTM3_C6SC & FTM_CSC_CHF) { FTM3_C6SC &= ~FTM_CSC_CHF; } task6();
-    // if (FTM3_C7SC & FTM_CSC_CHF) { FTM3_C7SC &= ~FTM_CSC_CHF; } task7();
+    // if (FTM3_C2SC & FTM_CSC_CHF) { FTM3_C2SC &= ~FTM_CSC_CHF; task2(); }
+    // if (FTM3_C3SC & FTM_CSC_CHF) { FTM3_C3SC &= ~FTM_CSC_CHF; task3(); }
+    // if (FTM3_C4SC & FTM_CSC_CHF) { FTM3_C4SC &= ~FTM_CSC_CHF; task4(); }
+    // if (FTM3_C5SC & FTM_CSC_CHF) { FTM3_C5SC &= ~FTM_CSC_CHF; task5(); }
+    // if (FTM3_C6SC & FTM_CSC_CHF) { FTM3_C6SC &= ~FTM_CSC_CHF; task6(); }
+    // if (FTM3_C7SC & FTM_CSC_CHF) { FTM3_C7SC &= ~FTM_CSC_CHF; task7(); }
 }

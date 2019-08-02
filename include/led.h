@@ -97,14 +97,13 @@ public:
 
     // set color of all segment Led's
     void setAll(int color);
-
-    // set color of all segment Led's
     void setAll(uint8_t red, uint8_t green, uint8_t blue, uint8_t white);
+
+    // set the Color or the top 4 LED's
+    void setTop(int color);
 
     // set inidvidual Led of segment
     void setLed(uint32_t id, int color);
-
-    // set inidvidual Led of segment
     void setLed(uint32_t id, uint8_t red, uint8_t green, uint8_t blue, uint8_t white);
 
 

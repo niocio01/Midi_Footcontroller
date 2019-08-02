@@ -25,9 +25,9 @@ void setup()
 
     ButtonLights::init();
 // 
-    ButtonLights::setTrackState(0, ButtonLights::WAITING);
-    ButtonLights::setTrackState(1, ButtonLights::EMPTY);
-    ButtonLights::setTrackState(2, ButtonLights::EMPTY);
+    // ButtonLights::setTrackState(0, ButtonLights::EMPTY);
+    // ButtonLights::setTrackState(1, ButtonLights::EMPTY);
+    // ButtonLights::setTrackState(2, ButtonLights::EMPTY);
 // 
     // ButtonLights::update();
 
