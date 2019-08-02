@@ -12,8 +12,8 @@ namespace Led
 
 uint8_t masterBrightness = 255;
 
-byte drawingMemory[numLed * 3];         //  3 bytes per LED
-DMAMEM byte displayMemory[numLed * 12]; // 12 bytes per LED
+byte drawingMemory[numLed * 4];         //  4 bytes per LED
+DMAMEM byte displayMemory[numLed * 16]; // 16 bytes per LED
 
 // create new Led (WS2812Serial) Object
 WS2812Serial leds(numLed, displayMemory, drawingMemory, pin, WS2812_RGBW);
@@ -105,6 +105,7 @@ void Test(void)
     colorWipe(RGBW_PINK, microsec);
     colorWipe(RGBW_ORANGE, microsec);
     colorWipe(RGBW_YELLOW, microsec);
+    Serial.print("Led ");
 }
 
 // wipe color thru all Leds
