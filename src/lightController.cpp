@@ -48,7 +48,7 @@ void setTrackState(uint8_t track, trackState_t state)
 {
     trackState[track] = state;
 
-    if (state == WAITING)
+    if (state == WAITING_FOR_PAUSING or state == WAITING_FOR_PLAYING or state == WAITING_FOR_RECORDING)
     {
         blinkingState[track] = true;
         TimedTasks::resetTask1();
@@ -64,7 +64,10 @@ void update(void)
 
     for (int track = 0; track < 3; track++)
     {
-        if (trackState[track] != OldTrackState[track] or trackState[track] == WAITING)
+        if (trackState[track] != OldTrackState[track] or
+            trackState[track] == WAITING_FOR_PAUSING or
+            trackState[track] == WAITING_FOR_PLAYING or
+            trackState[track] == WAITING_FOR_RECORDING)
         {
 
             int color = getColorCode(getTrackColor(track));
@@ -103,9 +106,7 @@ void update(void)
                 segmentLights[track * 2 + 1].setAll(color);
                 break;
 
-
-            case WAITING:
-
+            case WAITING_FOR_PAUSING:
                 if (blinkingState[track] == false)
                 {
                     blinkingState[track] = true;
@@ -119,6 +120,49 @@ void update(void)
                 {
                     blinkingState[track] = false;
                     segmentLights[track * 2].setBrightness(HIGH_BRIGHTNESS);
+                    segmentLights[track * 2 + 1].setBrightness(HIGH_BRIGHTNESS);
+
+                    segmentLights[track * 2].setAll(color);
+                    segmentLights[track * 2 + 1].setAll(color);
+                }
+                break;
+
+            case WAITING_FOR_PLAYING:
+                if (blinkingState[track] == false)
+                {
+                    blinkingState[track] = true;
+                    segmentLights[track * 2].setBrightness(MID_BRIGHTNESS);
+                    segmentLights[track * 2 + 1].setBrightness(MID_BRIGHTNESS);
+
+                    segmentLights[track * 2].setAll(color);
+                    segmentLights[track * 2 + 1].setAll(color);
+                }
+                else
+                {
+                    blinkingState[track] = false;
+                    segmentLights[track * 2].setBrightness(HIGH_BRIGHTNESS);
+                    segmentLights[track * 2 + 1].setBrightness(MID_BRIGHTNESS);
+
+                    segmentLights[track * 2].setAll(color);
+                    segmentLights[track * 2 + 1].setAll(color);
+                }
+                break;
+
+            case WAITING_FOR_RECORDING:
+
+                if (blinkingState[track] == false)
+                {
+                    blinkingState[track] = true;
+                    segmentLights[track * 2].setBrightness(MID_BRIGHTNESS);
+                    segmentLights[track * 2 + 1].setBrightness(MID_BRIGHTNESS);
+
+                    segmentLights[track * 2].setAll(color);
+                    segmentLights[track * 2 + 1].setAll(color);
+                }
+                else
+                {
+                    blinkingState[track] = false;
+                    segmentLights[track * 2].setBrightness(MID_BRIGHTNESS);
                     segmentLights[track * 2 + 1].setBrightness(HIGH_BRIGHTNESS);
 
                     segmentLights[track * 2].setAll(color);

@@ -43,7 +43,9 @@ typedef enum trackState
     PAUSED,
     PLAYING,
     RECORDING,
-    WAITING
+    WAITING_FOR_PLAYING,
+    WAITING_FOR_RECORDING,
+    WAITING_FOR_PAUSING,
 
 } trackState_t;
 

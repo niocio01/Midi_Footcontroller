@@ -46,7 +46,7 @@ void footButtonPressed(uint8_t button)
             {
                 Serial.println(" -> Waiting for Recording \n");
                 trackState[track] = WAITING_FOR_RECORDING;
-                ButtonLights::setTrackState(track, ButtonLights::WAITING);
+                ButtonLights::setTrackState(track, ButtonLights::WAITING_FOR_RECORDING);
             }
             else
             {
@@ -61,7 +61,7 @@ void footButtonPressed(uint8_t button)
             {
                 Serial.println(" -> Waiting for Playing \n");
                 trackState[track] = WAITING_FOR_PLAYING;                
-                ButtonLights::setTrackState(track, ButtonLights::WAITING);
+                ButtonLights::setTrackState(track, ButtonLights::WAITING_FOR_PLAYING);
             }
             else
             {
@@ -76,7 +76,7 @@ void footButtonPressed(uint8_t button)
             {
                 Serial.println(" -> Waiting for Pausing\n");
                 trackState[track] = WAITING_FOR_PAUSING;
-                ButtonLights::setTrackState(track, ButtonLights::WAITING);
+                ButtonLights::setTrackState(track, ButtonLights::WAITING_FOR_PAUSING);
             }
             else
             {
@@ -91,7 +91,7 @@ void footButtonPressed(uint8_t button)
             {
                 Serial.print(" -> Waiting for Pausing\n");
                 trackState[track] = WAITING_FOR_PAUSING;
-                ButtonLights::setTrackState(track, ButtonLights::WAITING);
+                ButtonLights::setTrackState(track, ButtonLights::WAITING_FOR_PAUSING);
             }
             else
             {
@@ -103,7 +103,16 @@ void footButtonPressed(uint8_t button)
         case WAITING_FOR_PLAYING:
             Serial.print("Waiting for Playing");
             trackState[track] = oldTrackState[track];
-            
+            if (oldTrackState[track] == PAUSED)
+            {
+                Serial.println(" -> Paused\n");
+                ButtonLights::setTrackState(track, ButtonLights::PAUSED);
+            }
+            else if (oldTrackState[track] == RECORDING)
+            {
+                Serial.println(" -> Recording\n");
+                ButtonLights::setTrackState(track, ButtonLights::RECORDING);
+            }            
             break;
 
         case WAITING_FOR_RECORDING:
@@ -129,7 +138,16 @@ void footButtonPressed(uint8_t button)
         case WAITING_FOR_PAUSING:
             Serial.print("Waiting for Pausing");
             trackState[track] = oldTrackState[track];
-            // TODO update Lighting
+            if (oldTrackState[track] == PLAYING)
+            {
+                Serial.println(" -> Playing\n");
+                ButtonLights::setTrackState(track, ButtonLights::PLAYING);
+            }
+            else if (oldTrackState[track] == RECORDING)
+            {
+                Serial.println(" -> Recording\n");
+                ButtonLights::setTrackState(track, ButtonLights::RECORDING);
+            }
             break;
 
         default:
