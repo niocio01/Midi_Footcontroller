@@ -21,15 +21,36 @@ bool blinkingState[3] = {false};
 
 uint8_t currentFrame[3] = {0, 0, 0};
 
-uint8_t waitingForPausing[8][2][8] = {
-    {{MI, LO, LO, LO, LO, LO, MI, HI}, {HI, MI, LO, LO, LO, LO, LO, LO}},
-    {{LO, LO, LO, LO, LO, MI, HI, MI}, {MI, HI, MI, LO, LO, LO, LO, LO}},
-    {{LO, LO, LO, LO, MI, HI, MI, LO}, {LO, MI, HI, MI, LO, LO, LO, LO}},
-    {{LO, LO, LO, MI, HI, MI, LO, LO}, {LO, LO, MI, HI, MI, LO, LO, LO}},
-    {{LO, LO, MI, HI, MI, LO, LO, LO}, {LO, LO, LO, MI, HI, MI, LO, LO}},
-    {{LO, MI, HI, MI, LO, LO, LO, LO}, {LO, LO, LO, LO, MI, HI, MI, LO}},
-    {{MI, HI, MI, LO, LO, LO, LO, LO}, {LO, LO, LO, LO, LO, MI, HI, MI}},
-    {{HI, MI, LO, LO, LO, LO, LO, MI}, {MI, LO, LO, LO, LO, LO, MI, HI}}};
+uint8_t animations[3][8][2][8] = { // create array: 3 animation Effects, 8 frames, 2 buttons, 8 led's
+    {// first animation (wait for Playing)
+     {{MI, LO, LO, LO, LO, LO, MI, HI}, {LO, LO, LO, LO, LO, LO, LO, LO}},
+     {{LO, LO, LO, LO, LO, MI, HI, MI}, {LO, LO, LO, LO, LO, LO, LO, LO}},
+     {{LO, LO, LO, LO, MI, HI, MI, LO}, {LO, LO, LO, LO, LO, LO, LO, LO}},
+     {{LO, LO, LO, MI, HI, MI, LO, LO}, {LO, LO, LO, LO, LO, LO, LO, LO}},
+     {{LO, LO, MI, HI, MI, LO, LO, LO}, {LO, LO, LO, LO, LO, LO, LO, LO}},
+     {{LO, MI, HI, MI, LO, LO, LO, LO}, {LO, LO, LO, LO, LO, LO, LO, LO}},
+     {{MI, HI, MI, LO, LO, LO, LO, LO}, {LO, LO, LO, LO, LO, LO, LO, LO}},
+     {{HI, MI, LO, LO, LO, LO, LO, MI}, {LO, LO, LO, LO, LO, LO, LO, LO}}},
+    {// first animation (wait for Recording)
+     {{LO, LO, LO, LO, LO, LO, LO, LO}, {HI, MI, LO, LO, LO, LO, LO, LO}},
+     {{LO, LO, LO, LO, LO, LO, LO, LO}, {MI, HI, MI, LO, LO, LO, LO, LO}},
+     {{LO, LO, LO, LO, LO, LO, LO, LO}, {LO, MI, HI, MI, LO, LO, LO, LO}},
+     {{LO, LO, LO, LO, LO, LO, LO, LO}, {LO, LO, MI, HI, MI, LO, LO, LO}},
+     {{LO, LO, LO, LO, LO, LO, LO, LO}, {LO, LO, LO, MI, HI, MI, LO, LO}},
+     {{LO, LO, LO, LO, LO, LO, LO, LO}, {LO, LO, LO, LO, MI, HI, MI, LO}},
+     {{LO, LO, LO, LO, LO, LO, LO, LO}, {LO, LO, LO, LO, LO, MI, HI, MI}},
+     {{LO, LO, LO, LO, LO, LO, LO, LO}, {MI, LO, LO, LO, LO, LO, MI, HI}}},
+    {// first animation (wait for Pausing)
+     {{MI, LO, LO, LO, LO, LO, MI, HI}, {HI, MI, LO, LO, LO, LO, LO, LO}},
+     {{LO, LO, LO, LO, LO, MI, HI, MI}, {MI, HI, MI, LO, LO, LO, LO, LO}},
+     {{LO, LO, LO, LO, MI, HI, MI, LO}, {LO, MI, HI, MI, LO, LO, LO, LO}},
+     {{LO, LO, LO, MI, HI, MI, LO, LO}, {LO, LO, MI, HI, MI, LO, LO, LO}},
+     {{LO, LO, MI, HI, MI, LO, LO, LO}, {LO, LO, LO, MI, HI, MI, LO, LO}},
+     {{LO, MI, HI, MI, LO, LO, LO, LO}, {LO, LO, LO, LO, MI, HI, MI, LO}},
+     {{MI, HI, MI, LO, LO, LO, LO, LO}, {LO, LO, LO, LO, LO, MI, HI, MI}},
+     {{HI, MI, LO, LO, LO, LO, LO, MI}, {MI, LO, LO, LO, LO, LO, MI, HI}}}
+     };
+
 
 void init(void)
 {
@@ -76,11 +97,6 @@ void update(void)
         {
             int color = getColorCode(getTrackColor(track));
 
-            Serial.print("\n Track  ");
-            Serial.print(track);
-            Serial.print(" Color: 0x ");
-            Serial.print(color, HEX);
-
             switch (trackState[track])
             {
             case EMPTY:
@@ -101,14 +117,14 @@ void update(void)
 
             case PLAYING:
                 segmentLights[track * 2].setBrightness(HI);
-                segmentLights[track * 2 + 1].setBrightness(MI);
+                segmentLights[track * 2 + 1].setBrightness(LO);
 
                 segmentLights[track * 2].setAll(color);
                 segmentLights[track * 2 + 1].setAll(color);
                 break;
 
             case RECORDING:
-                segmentLights[track * 2].setBrightness(MI);
+                segmentLights[track * 2].setBrightness(LO);
                 segmentLights[track * 2 + 1].setBrightness(HI);
 
                 segmentLights[track * 2].setAll(color);
@@ -149,17 +165,16 @@ void playAnimation(void)
         // check, whether or not to play an animation for the current track
         if (trackState[track] == WAITING_FOR_PAUSING or trackState[track] == WAITING_FOR_PLAYING or trackState[track] == WAITING_FOR_RECORDING)
         {
-            
+
             int color = getColorCode(getTrackColor(track)); // get the color
-            Serial.print(track);
-            Serial.print("  ");
-            Serial.print(color, HEX);
+            uint8_t type = trackState[track] - WAITING_FOR_PLAYING;
+            // Serial.print(type);
             for (uint8_t pixel = 0; pixel < 8; pixel++) // go thur every Pixel
             {
-                segmentLights[track * 2].setBrightness(waitingForPausing[currentFrame[track]][0][pixel]); // set the brightness
+                segmentLights[track * 2].setBrightness(animations[type][currentFrame[track]][0][pixel]); // set the brightness
                 segmentLights[track * 2].setLed(pixel, color);                                            // write the color to repace with the new brightness value
 
-                segmentLights[track * 2 + 1].setBrightness(waitingForPausing[currentFrame[track]][1][pixel]); // set the brightness
+                segmentLights[track * 2 + 1].setBrightness(animations[type][currentFrame[track]][1][pixel]); // set the brightness
                 segmentLights[track * 2 + 1].setLed(pixel, color);                                            // write the color to repace with the new brightness value
             }
             // Serial.println();
