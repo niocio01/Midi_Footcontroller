@@ -55,6 +55,8 @@ void setTrackState(uint8_t track, trackState_t state);
 
 void update(void);
 
+void playAnimation(void);
+
 }; // END NAMESPACE
 
 #endif // LIGHT_CONTROLLER_H

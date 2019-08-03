@@ -8,9 +8,9 @@
 namespace ButtonLights
 {
 
-const uint8_t LOW_BRIGHTNESS = 25;
-const uint8_t MID_BRIGHTNESS = 80;
-const uint8_t HIGH_BRIGHTNESS = 255;
+const uint8_t LO = 25;
+const uint8_t MI = 80;
+const uint8_t HI = 255;
 
 Led::Segment segmentLights[6];
 
@@ -18,6 +18,18 @@ trackState_t trackState[3] = {};
 trackState_t OldTrackState[3] = {};
 
 bool blinkingState[3] = {false};
+
+uint8_t currentFrame[3] = {0, 0, 0};
+
+uint8_t waitingForPausing[8][2][8] = {
+    {{MI, LO, LO, LO, LO, LO, MI, HI}, {HI, MI, LO, LO, LO, LO, LO, LO}},
+    {{LO, LO, LO, LO, LO, MI, HI, MI}, {MI, HI, MI, LO, LO, LO, LO, LO}},
+    {{LO, LO, LO, LO, MI, HI, MI, LO}, {LO, MI, HI, MI, LO, LO, LO, LO}},
+    {{LO, LO, LO, MI, HI, MI, LO, LO}, {LO, LO, MI, HI, MI, LO, LO, LO}},
+    {{LO, LO, MI, HI, MI, LO, LO, LO}, {LO, LO, LO, MI, HI, MI, LO, LO}},
+    {{LO, MI, HI, MI, LO, LO, LO, LO}, {LO, LO, LO, LO, MI, HI, MI, LO}},
+    {{MI, HI, MI, LO, LO, LO, LO, LO}, {LO, LO, LO, LO, LO, MI, HI, MI}},
+    {{HI, MI, LO, LO, LO, LO, LO, MI}, {MI, LO, LO, LO, LO, LO, MI, HI}}};
 
 void init(void)
 {
@@ -50,13 +62,9 @@ void setTrackState(uint8_t track, trackState_t state)
 
     if (state == WAITING_FOR_PAUSING or state == WAITING_FOR_PLAYING or state == WAITING_FOR_RECORDING)
     {
-        blinkingState[track] = true;
-        TimedTasks::resetTask1();
+        currentFrame[track] = 0; // start from the beginning
     }
-    else
-    {
-        ButtonLights::update();
-    }
+    ButtonLights::update();
 }
 
 void update(void)
@@ -64,110 +72,59 @@ void update(void)
 
     for (int track = 0; track < 3; track++)
     {
-        if (trackState[track] != OldTrackState[track] or
-            trackState[track] == WAITING_FOR_PAUSING or
-            trackState[track] == WAITING_FOR_PLAYING or
-            trackState[track] == WAITING_FOR_RECORDING)
+        if (trackState[track] != OldTrackState[track])
         {
-
             int color = getColorCode(getTrackColor(track));
+
+            Serial.print("\n Track  ");
+            Serial.print(track);
+            Serial.print(" Color: 0x ");
+            Serial.print(color, HEX);
 
             switch (trackState[track])
             {
             case EMPTY:
-                segmentLights[track * 2].setBrightness(LOW_BRIGHTNESS);
-                segmentLights[track * 2 + 1].setBrightness(LOW_BRIGHTNESS);
+                segmentLights[track * 2].setBrightness(LO);
+                segmentLights[track * 2 + 1].setBrightness(LO);
 
                 segmentLights[track * 2].setAll(color);
                 segmentLights[track * 2 + 1].setAll(color);
                 break;
 
             case PAUSED:
-                segmentLights[track * 2].setBrightness(MID_BRIGHTNESS);
-                segmentLights[track * 2 + 1].setBrightness(MID_BRIGHTNESS);
+                segmentLights[track * 2].setBrightness(MI);
+                segmentLights[track * 2 + 1].setBrightness(MI);
 
                 segmentLights[track * 2].setAll(color);
                 segmentLights[track * 2 + 1].setAll(color);
                 break;
 
             case PLAYING:
-                segmentLights[track * 2].setBrightness(HIGH_BRIGHTNESS);
-                segmentLights[track * 2 + 1].setBrightness(MID_BRIGHTNESS);
+                segmentLights[track * 2].setBrightness(HI);
+                segmentLights[track * 2 + 1].setBrightness(MI);
 
                 segmentLights[track * 2].setAll(color);
                 segmentLights[track * 2 + 1].setAll(color);
                 break;
 
             case RECORDING:
-                segmentLights[track * 2].setBrightness(MID_BRIGHTNESS);
-                segmentLights[track * 2 + 1].setBrightness(HIGH_BRIGHTNESS);
+                segmentLights[track * 2].setBrightness(MI);
+                segmentLights[track * 2 + 1].setBrightness(HI);
 
                 segmentLights[track * 2].setAll(color);
                 segmentLights[track * 2 + 1].setAll(color);
                 break;
 
             case WAITING_FOR_PAUSING:
-                if (blinkingState[track] == false)
-                {
-                    blinkingState[track] = true;
-                    segmentLights[track * 2].setBrightness(MID_BRIGHTNESS);
-                    segmentLights[track * 2 + 1].setBrightness(MID_BRIGHTNESS);
-
-                    segmentLights[track * 2].setAll(color);
-                    segmentLights[track * 2 + 1].setAll(color);
-                }
-                else
-                {
-                    blinkingState[track] = false;
-                    segmentLights[track * 2].setBrightness(HIGH_BRIGHTNESS);
-                    segmentLights[track * 2 + 1].setBrightness(HIGH_BRIGHTNESS);
-
-                    segmentLights[track * 2].setAll(color);
-                    segmentLights[track * 2 + 1].setAll(color);
-                }
+                // do nothing
                 break;
 
             case WAITING_FOR_PLAYING:
-                if (blinkingState[track] == false)
-                {
-                    blinkingState[track] = true;
-                    segmentLights[track * 2].setBrightness(MID_BRIGHTNESS);
-                    segmentLights[track * 2 + 1].setBrightness(MID_BRIGHTNESS);
-
-                    segmentLights[track * 2].setAll(color);
-                    segmentLights[track * 2 + 1].setAll(color);
-                }
-                else
-                {
-                    blinkingState[track] = false;
-                    segmentLights[track * 2].setBrightness(HIGH_BRIGHTNESS);
-                    segmentLights[track * 2 + 1].setBrightness(MID_BRIGHTNESS);
-
-                    segmentLights[track * 2].setAll(color);
-                    segmentLights[track * 2 + 1].setAll(color);
-                }
+                // do nothing
                 break;
 
             case WAITING_FOR_RECORDING:
-
-                if (blinkingState[track] == false)
-                {
-                    blinkingState[track] = true;
-                    segmentLights[track * 2].setBrightness(MID_BRIGHTNESS);
-                    segmentLights[track * 2 + 1].setBrightness(MID_BRIGHTNESS);
-
-                    segmentLights[track * 2].setAll(color);
-                    segmentLights[track * 2 + 1].setAll(color);
-                }
-                else
-                {
-                    blinkingState[track] = false;
-                    segmentLights[track * 2].setBrightness(MID_BRIGHTNESS);
-                    segmentLights[track * 2 + 1].setBrightness(HIGH_BRIGHTNESS);
-
-                    segmentLights[track * 2].setAll(color);
-                    segmentLights[track * 2 + 1].setAll(color);
-                }
+                // do nothing
                 break;
 
             default:
@@ -183,6 +140,36 @@ void update(void)
         OldTrackState[track] = trackState[track]; // update Old Buffer to current one
     }
     Led::update();
+}
+
+void playAnimation(void)
+{
+    for (int track = 0; track < 3; track++) // go thru all tracks
+    {
+        // check, whether or not to play an animation for the current track
+        if (trackState[track] == WAITING_FOR_PAUSING or trackState[track] == WAITING_FOR_PLAYING or trackState[track] == WAITING_FOR_RECORDING)
+        {
+            
+            int color = getColorCode(getTrackColor(track)); // get the color
+            Serial.print(track);
+            Serial.print("  ");
+            Serial.print(color, HEX);
+            for (uint8_t pixel = 0; pixel < 8; pixel++) // go thur every Pixel
+            {
+                segmentLights[track * 2].setBrightness(waitingForPausing[currentFrame[track]][0][pixel]); // set the brightness
+                segmentLights[track * 2].setLed(pixel, color);                                            // write the color to repace with the new brightness value
+
+                segmentLights[track * 2 + 1].setBrightness(waitingForPausing[currentFrame[track]][1][pixel]); // set the brightness
+                segmentLights[track * 2 + 1].setLed(pixel, color);                                            // write the color to repace with the new brightness value
+            }
+            // Serial.println();
+        }
+        if (currentFrame[track] == 7)
+            currentFrame[track] = 0;
+        else
+            currentFrame[track]++;
+    }
+    Led::update(); // write all the data to the pixels
 }
 
 } // namespace ButtonLights

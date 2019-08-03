@@ -6,6 +6,8 @@
     },
     "files.associations": {
         "twi.h": "c",
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp"
     }
 }

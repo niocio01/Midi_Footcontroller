@@ -8,10 +8,8 @@ namespace TimedTasks
 #define uS_TO_TIMER_COMPARE(uS) ((uS * 15) >> 5) //Fixed point equivalent of uS / 2.13333.
 
 #define UPDATE_INTERVALL 10000
-#define UPDATE_INTERVALL_LEDS 50000
-#define NO_OF_INTERUPTS_LEDS 3
+#define UPDATE_INTERVALL_LEDS 100000
 
-uint8_t NoOfInterrupt_Led = 0;
 
 void timerInit(void)
 {
@@ -64,20 +62,7 @@ void task1(void)
 {
 
     FTM3_C1V += uS_TO_TIMER_COMPARE(UPDATE_INTERVALL_LEDS);
-    if (NoOfInterrupt_Led == NO_OF_INTERUPTS_LEDS)
-    {
-        NoOfInterrupt_Led = 0;
-        ButtonLights::update();
-    }
-    else
-    {
-        NoOfInterrupt_Led++;
-    }
-}
-
-void resetTask1(void)
-{
-    NoOfInterrupt_Led = 0;
+    ButtonLights::playAnimation();
 }
 
 } // namespace TimedTasks

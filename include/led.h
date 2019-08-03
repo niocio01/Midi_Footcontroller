@@ -21,7 +21,7 @@ const int pin = 8;
 // create color type, used in Config reading / setting
 typedef enum Colors
 {
-    RED = 1,
+    RED,
     GREEN,
     BLUE,
     WHITE,
